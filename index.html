@@ -8,47 +8,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
-    <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyDpHog77RsdA_RaSmkOL4-NRsc32A6g4aI",
-    authDomain: "quiz-game-cccfa.firebaseapp.com",
-    databaseURL: "https://quiz-game-cccfa-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "quiz-game-cccfa",
-    storageBucket: "quiz-game-cccfa.firebasestorage.app",
-    messagingSenderId: "1072889059838",
-    appId: "1:1072889059838:web:9d9b62e42721ce75c008af",
-    measurementId: "G-1PY5FHQB0H"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
-
+    <!-- ════════════════════════════════════════════════════════
+         🔥 FIREBASE SETUP — ИНСТРУКЦИЯ:
+         1. Перейди на https://firebase.google.com → "Get Started"
+         2. Создай проект (любое название)
+         3. Нажми </> (Web app), зарегистрируй приложение
+         4. Скопируй firebaseConfig и замени значения ниже
+         5. В консоли Firebase: Realtime Database → Create database
+            → Start in TEST MODE → выбери регион
+         6. Готово! Загрузи index.html на GitHub Pages / Netlify
+    ═════════════════════════════════════════════════════════ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, set, onValue, remove, get }
             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-        // ▼▼▼ ЗАМЕНИ НА СВОИ ДАННЫЕ ▼▼▼
         const firebaseConfig = {
-            apiKey:            "ТВОЙ_API_KEY",
-            authDomain:        "ТВОЙ_PROJECT.firebaseapp.com",
-            databaseURL:       "https://ТВОЙ_PROJECT-default-rtdb.firebaseio.com",
-            projectId:         "ТВОЙ_PROJECT",
-            storageBucket:     "ТВОЙ_PROJECT.appspot.com",
-            messagingSenderId: "ТВОЙ_SENDER_ID",
-            appId:             "ТВОЙ_APP_ID"
+            apiKey:            "AIzaSyDpHog77RsdA_RaSmkOL4-NRsc32A6g4aI",
+            authDomain:        "quiz-game-cccfa.firebaseapp.com",
+            databaseURL:       "https://quiz-game-cccfa-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId:         "quiz-game-cccfa",
+            storageBucket:     "quiz-game-cccfa.firebasestorage.app",
+            messagingSenderId: "1072889059838",
+            appId:             "1:1072889059838:web:9d9b62e42721ce75c008af",
+            measurementId:     "G-1PY5FHQB0H"
         };
-        // ▲▲▲ ЗАМЕНИ НА СВОИ ДАННЫЕ ▲▲▲
 
         const app = initializeApp(firebaseConfig);
         const db  = getDatabase(app);
