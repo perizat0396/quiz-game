@@ -1384,7 +1384,7 @@ function runGame(teamList){
     $('qBody').textContent = q.q;
     $('lawBox').textContent = q.law;
     $('lawBox').classList.remove('on');
-    $('lawBtn').innerHTML = '📖 Заң';
+    $('lawBtn').innerHTML = '📖 Жауабы';
     $('ff50Btn').classList.remove('off');
     ff50done=false; answered=false;
 
@@ -1450,7 +1450,7 @@ function runGame(teamList){
   $('lawBtn').onclick=()=>{
     if(!answered){toast('Алдымен жауап беріңіз! ⚠️');return;}
     $('lawBox').classList.toggle('on');
-    $('lawBtn').innerHTML=$('lawBox').classList.contains('on')?'📖 Заңды жабу':'📖 Заң';
+    $('lawBtn').innerHTML=$('lawBox').classList.contains('on')?'📖 Жауабын жабу':'📖 Жауабы';
   };
 
   $('closeQBtn').onclick=()=>{
@@ -1540,4 +1540,5 @@ function launchConfetti(){
 </script>
 </body>
 </html>
+
 
