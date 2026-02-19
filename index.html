@@ -1,1406 +1,1541 @@
 <!DOCTYPE html>
 <html lang="kk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Заң және Тәртіп — Командалық ойын</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Білім Сайысы — Командалық ойын</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
-    <!-- ════════════════════════════════════════════════════════
-         🔥 FIREBASE SETUP — ИНСТРУКЦИЯ:
-         1. Перейди на https://firebase.google.com → "Get Started"
-         2. Создай проект (любое название)
-         3. Нажми </> (Web app), зарегистрируй приложение
-         4. Скопируй firebaseConfig и замени значения ниже
-         5. В консоли Firebase: Realtime Database → Create database
-            → Start in TEST MODE → выбери регион
-         6. Готово! Загрузи index.html на GitHub Pages / Netlify
-    ═════════════════════════════════════════════════════════ -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, remove, get }
-            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+<script type="module">
+  import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue, remove, get }
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey:            "AIzaSyDpHog77RsdA_RaSmkOL4-NRsc32A6g4aI",
-            authDomain:        "quiz-game-cccfa.firebaseapp.com",
-            databaseURL:       "https://quiz-game-cccfa-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId:         "quiz-game-cccfa",
-            storageBucket:     "quiz-game-cccfa.firebasestorage.app",
-            messagingSenderId: "1072889059838",
-            appId:             "1:1072889059838:web:9d9b62e42721ce75c008af",
-            measurementId:     "G-1PY5FHQB0H"
-        };
+  const firebaseConfig = {
+    apiKey:            "AIzaSyDpHog77RsdA_RaSmkOL4-NRsc32A6g4aI",
+    authDomain:        "quiz-game-cccfa.firebaseapp.com",
+    databaseURL:       "https://quiz-game-cccfa-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:         "quiz-game-cccfa",
+    storageBucket:     "quiz-game-cccfa.firebasestorage.app",
+    messagingSenderId: "1072889059838",
+    appId:             "1:1072889059838:web:9d9b62e42721ce75c008af"
+  };
 
-        const app = initializeApp(firebaseConfig);
-        const db  = getDatabase(app);
+  const app = initializeApp(firebaseConfig);
+  const db  = getDatabase(app);
+  window._db  = db;
+  window._ref = ref;
+  window._set = set;
+  window._get = get;
+  window._onVal  = onValue;
+  window._remove = remove;
+  window.dispatchEvent(new Event('fb-ready'));
+</script>
 
-        // Expose to global scope for the main script
-        window._fbDB     = db;
-        window._fbRef    = ref;
-        window._fbSet    = set;
-        window._fbGet    = get;
-        window._fbOnVal  = onValue;
-        window._fbRemove = remove;
-        window._fbReady  = true;
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',sans-serif}
 
-        // Signal that Firebase is ready
-        window.dispatchEvent(new Event('firebase-ready'));
-    </script>
+:root{
+  --bg:       #06080f;
+  --bg2:      #0d1120;
+  --gold:     #f5c842;
+  --gold2:    #c89e1a;
+  --c1:       #3b82f6; /* Білім - blue */
+  --c1d:      #1d4ed8;
+  --c2:       #f59e0b; /* Заң - amber */
+  --c2d:      #b45309;
+  --c3:       #a855f7; /* Ойлан-тап - purple */
+  --c3d:      #7e22ce;
+  --c4:       #22c55e; /* Қазақстан - green */
+  --c4d:      #15803d;
+  --radius:   18px;
+  --shadow:   0 8px 32px rgba(0,0,0,.5);
+}
 
-    <style>
-        /* ═══════════════ RESET & BASE ═══════════════ */
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat',sans-serif; }
+body{
+  min-height:100vh;
+  background:var(--bg);
+  color:#fff;
+  overflow-x:hidden;
+}
 
-        :root {
-            --gold:   #FFD700;
-            --gold2:  #d4a500;
-            --dark:   #000a1f;
-            --dark2:  #001a33;
-            --shadow: #7f6500;
-        }
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
 
-        body {
-            min-height:100vh;
-            background: linear-gradient(145deg,#000a1f,#001a33);
-            display:flex; justify-content:center; align-items:flex-start;
-            padding:20px;
-        }
-        body::before {
-            content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.03"><path d="M20,20 L30,10 L40,20 L50,5 L60,20 L70,10 L80,20 L70,35 L80,50 L60,40 L50,55 L40,40 L20,50 L30,35 L20,20" fill="none" stroke="%23FFD700" stroke-width="1.5"/></svg>');
-            background-repeat:repeat;
-        }
+/* ══════════════════════════════════
+   MAIN SCREEN
+══════════════════════════════════ */
+#mainScreen{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  padding:24px;
+  max-width:1400px;
+  margin:0 auto;
+  gap:24px;
+}
 
-        /* ═══════════════ LAYOUT ═══════════════ */
-        .wrapper { width:100%; max-width:1400px; z-index:2; display:flex; flex-direction:column; gap:25px; }
+/* ── TOP BAR ── */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:linear-gradient(135deg,#0f1629,#1a2040);
+  border:1.5px solid rgba(245,200,66,.25);
+  border-radius:var(--radius);
+  padding:18px 28px;
+  gap:16px;
+  flex-wrap:wrap;
+}
+.topbar-logo{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.logo-icon{
+  font-size:2.6rem;
+  line-height:1;
+}
+.logo-text h1{
+  font-size:1.55rem;
+  font-weight:900;
+  color:var(--gold);
+  letter-spacing:1px;
+  line-height:1.1;
+}
+.logo-text p{
+  font-size:.82rem;
+  color:rgba(255,255,255,.55);
+  margin-top:2px;
+}
+.topbar-badges{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.badge{
+  background:rgba(245,200,66,.12);
+  border:1.5px solid rgba(245,200,66,.3);
+  color:var(--gold);
+  padding:7px 16px;
+  border-radius:50px;
+  font-weight:700;
+  font-size:.9rem;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.badge.green{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3);color:#4ade80}
+.badge.blue {background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.3);color:#93c5fd}
 
-        /* ═══════════════ HEADER ═══════════════ */
-        .law-header {
-            text-align:center; padding:30px 20px;
-            background:linear-gradient(135deg,#1E2A47,#141C32);
-            border-radius:20px; border:2px solid var(--gold);
-            box-shadow:0 0 30px rgba(255,215,0,.3);
-            position:relative; overflow:hidden;
-        }
-        .law-header::before {
-            content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
-            background:radial-gradient(circle,rgba(255,215,0,.15) 0%,transparent 70%);
-            animation:spin 6s linear infinite; z-index:0;
-        }
-        @keyframes spin { to { transform:rotate(360deg); } }
-        .law-title {
-            font-size:3.2rem; font-weight:900; color:var(--gold);
-            letter-spacing:4px; position:relative; z-index:1;
-            animation:glow 2s ease-in-out infinite;
-        }
-        @keyframes glow {
-            0%,100% { text-shadow:0 0 20px var(--gold); }
-            50%      { text-shadow:0 0 40px var(--gold),0 0 60px #FFA500; }
-        }
-        .law-subtitle { font-size:1.4rem; color:#fff; margin:8px 0 18px; position:relative; z-index:1; }
-        .law-icons { display:flex; justify-content:center; gap:35px; position:relative; z-index:1; }
-        .law-icon {
-            width:65px; height:65px; border-radius:50%;
-            background:rgba(255,215,0,.1); border:2px solid var(--gold);
-            display:flex; align-items:center; justify-content:center;
-            font-size:2rem; color:var(--gold);
-            animation:iconPulse 2s ease-in-out infinite;
-        }
-        .law-icon:nth-child(2) { animation-delay:.3s; }
-        .law-icon:nth-child(3) { animation-delay:.6s; }
-        @keyframes iconPulse {
-            0%,100% { box-shadow:0 0 15px rgba(255,215,0,.4); }
-            50%      { box-shadow:0 0 35px rgba(255,215,0,.8); transform:scale(1.08); }
-        }
+/* ── REGISTRATION PANEL ── */
+.reg-panel{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:20px;
+}
+@media(max-width:800px){.reg-panel{grid-template-columns:1fr}}
 
-        /* ═══════════════ SETUP BANNER (shown when Firebase not configured) ═══════════════ */
-        .setup-banner {
-            background:linear-gradient(135deg,#1a0a00,#2d1500);
-            border:3px solid #FF8C00; border-radius:20px; padding:25px 30px;
-        }
-        .setup-banner h3 { color:#FF8C00; font-size:1.5rem; margin-bottom:15px; }
-        .setup-steps { display:flex; flex-direction:column; gap:10px; }
-        .setup-step { display:flex; gap:12px; align-items:flex-start; color:#fff; font-size:1rem; }
-        .setup-num {
-            background:#FF8C00; color:#000; border-radius:50%;
-            width:28px; height:28px; min-width:28px; display:flex;
-            align-items:center; justify-content:center; font-weight:900;
-        }
-        .setup-link { color:#FFD700; text-decoration:none; font-weight:700; }
-        .setup-link:hover { text-decoration:underline; }
-        .setup-code {
-            background:rgba(0,0,0,.5); border:1px solid #FF8C00; border-radius:8px;
-            padding:10px 15px; font-family:monospace; color:#FFD700; font-size:0.9rem;
-            margin-top:10px; white-space:pre-wrap;
-        }
+/* QR block */
+.qr-block{
+  background:linear-gradient(145deg,#0f1629,#1a2040);
+  border:1.5px solid rgba(245,200,66,.25);
+  border-radius:var(--radius);
+  padding:24px;
+  text-align:center;
+  width:240px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+}
+@media(max-width:800px){.qr-block{width:100%}}
+.qr-block h3{color:var(--gold);font-size:1rem;font-weight:800;letter-spacing:1px}
+#qrcode{
+  background:#fff;
+  padding:8px;
+  border-radius:12px;
+  display:inline-block;
+}
+.qr-steps{width:100%;text-align:left}
+.qr-step{
+  display:flex;align-items:center;gap:10px;
+  color:rgba(255,255,255,.7);font-size:.82rem;padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.qr-step:last-child{border:none}
+.qr-num{
+  background:var(--gold);color:#000;
+  border-radius:50%;width:20px;height:20px;min-width:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:.72rem;
+}
 
-        /* ═══════════════ REGISTRATION SECTION ═══════════════ */
-        .section-box {
-            background:rgba(0,20,40,.95); border:3px solid var(--gold);
-            border-radius:25px; padding:30px;
-            box-shadow:0 20px 40px rgba(0,0,0,.8),0 0 40px rgba(255,215,0,.3);
-        }
-        .sec-header {
-            display:flex; align-items:center; gap:15px; color:var(--gold);
-            font-size:1.9rem; font-weight:900; text-transform:uppercase;
-            border-bottom:3px solid var(--gold); padding-bottom:15px; margin-bottom:25px;
-        }
-        .sec-header i {
-            background:var(--gold); color:var(--dark); border-radius:50%;
-            padding:13px; font-size:1.6rem;
-        }
+/* Teams panel */
+.teams-panel{
+  background:linear-gradient(145deg,#0f1629,#1a2040);
+  border:1.5px solid rgba(255,255,255,.08);
+  border-radius:var(--radius);
+  padding:24px;
+}
+.teams-panel-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:18px;flex-wrap:wrap;gap:10px;
+}
+.teams-panel-head h3{color:#fff;font-size:1.15rem;font-weight:800}
+.count-pill{
+  background:var(--gold);color:#000;
+  padding:5px 16px;border-radius:50px;
+  font-weight:900;font-size:1rem;
+}
+.teams-grid{
+  display:flex;flex-wrap:wrap;gap:12px;
+  min-height:80px;
+}
+.no-teams{
+  color:rgba(255,255,255,.3);
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:8px;width:100%;
+  padding:20px 0;font-size:.95rem;
+}
+.no-teams-icon{font-size:2.5rem;opacity:.4}
 
-        .reg-layout { display:flex; gap:25px; flex-wrap:wrap; }
+/* Team card */
+.team-card{
+  background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:14px 16px;
+  flex:1 1 160px;min-width:150px;
+  animation:popIn .35s ease;
+}
+@keyframes popIn{
+  from{opacity:0;transform:scale(.88) translateY(12px)}
+  to  {opacity:1;transform:scale(1) translateY(0)}
+}
+.tc-num-name{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:10px;
+}
+.tc-num{
+  background:var(--gold);color:#000;border-radius:50%;
+  width:26px;height:26px;min-width:26px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:.78rem;
+}
+.tc-name{font-weight:800;font-size:.95rem;color:var(--gold);line-height:1.2}
+.tc-member{
+  display:flex;align-items:center;gap:6px;
+  color:rgba(255,255,255,.65);font-size:.78rem;
+  padding:3px 0;border-top:1px solid rgba(255,255,255,.06);
+}
+.tc-icon{font-size:.75rem;opacity:.7}
 
-        /* QR block */
-        .qr-block {
-            flex:0 0 auto; min-width:230px;
-            background:linear-gradient(145deg,var(--dark2),var(--dark));
-            border:3px solid var(--gold); border-radius:20px; padding:25px;
-            text-align:center;
-        }
-        .qr-block h4 { color:var(--gold); margin-bottom:12px; font-size:1.15rem; }
-        #qrcode { display:inline-block; padding:8px; background:#fff; border-radius:10px; }
-        .qr-steps { margin-top:15px; text-align:left; }
-        .qr-step { display:flex; gap:10px; align-items:center; color:#E0E8FF; padding:5px 0; font-size:.9rem; }
-        .qr-num {
-            background:var(--gold); color:#000; border-radius:50%;
-            width:22px; height:22px; min-width:22px;
-            display:flex; align-items:center; justify-content:center;
-            font-weight:900; font-size:.78rem;
-        }
+/* Action buttons */
+.action-row{
+  display:flex;gap:12px;flex-wrap:wrap;
+  margin-top:16px;align-items:center;
+}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 24px;border-radius:50px;
+  font-weight:800;font-size:.95rem;
+  cursor:pointer;border:none;transition:.2s;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;box-shadow:0 4px 15px rgba(245,200,66,.3);
+}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(245,200,66,.5)}
+.btn-gold:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-green{
+  background:linear-gradient(135deg,#22c55e,#15803d);
+  color:#fff;box-shadow:0 4px 15px rgba(34,197,94,.3);
+  display:none;
+}
+.btn-green:hover{transform:translateY(-2px)}
+.btn-ghost{
+  background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.7);
+}
+.btn-ghost:hover{background:rgba(255,255,255,.12);color:#fff}
+.btn-sm{padding:8px 16px;font-size:.82rem}
 
-        /* Teams display */
-        .teams-grid { flex:1; min-width:280px; }
-        .teams-top {
-            display:flex; align-items:center; justify-content:space-between;
-            margin-bottom:18px; gap:10px; flex-wrap:wrap;
-        }
-        .teams-top-title { color:var(--gold); font-size:1.4rem; font-weight:800; }
-        .count-badge {
-            background:var(--gold); color:#000; padding:6px 18px;
-            border-radius:25px; font-weight:900; font-size:1.2rem;
-        }
-        .teams-cards { display:flex; flex-wrap:wrap; gap:14px; }
+/* Draw result */
+.draw-result{
+  display:none;margin-top:14px;
+  background:linear-gradient(135deg,rgba(245,200,66,.08),rgba(245,200,66,.03));
+  border:1.5px solid rgba(245,200,66,.3);
+  border-radius:14px;padding:16px 20px;text-align:center;
+}
+.draw-result.show{display:block}
+.dr-winner{font-size:1.6rem;font-weight:900;color:var(--gold)}
+.dr-hint{color:rgba(255,255,255,.55);font-size:.85rem;margin-top:4px}
 
-        /* Team card */
-        .team-card {
-            background:linear-gradient(145deg,var(--dark2),var(--dark));
-            border:3px solid var(--gold); border-radius:18px; padding:16px;
-            flex:1 1 160px; min-width:155px;
-            box-shadow:0 7px 0 var(--shadow);
-            animation:popIn .35s ease;
-        }
-        @keyframes popIn {
-            from { opacity:0; transform:scale(.85) translateY(15px); }
-            to   { opacity:1; transform:scale(1) translateY(0); }
-        }
-        .tc-name {
-            background:var(--gold); color:var(--dark); font-weight:900;
-            font-size:1rem; padding:9px 12px; border-radius:10px;
-            margin-bottom:10px; text-align:center; display:flex;
-            align-items:center; gap:8px; justify-content:center;
-        }
-        .tc-num {
-            background:var(--dark); color:var(--gold); border-radius:50%;
-            width:24px; height:24px; min-width:24px;
-            display:flex; align-items:center; justify-content:center;
-            font-size:.78rem; font-weight:900; border:2px solid var(--gold);
-        }
-        .tc-member {
-            display:flex; align-items:center; gap:7px; color:#fff;
-            padding:5px 0; border-bottom:1px solid rgba(255,215,0,.15);
-            font-size:.85rem;
-        }
-        .tc-member:last-child { border-bottom:none; }
-        .tc-member i { color:var(--gold); font-size:.78rem; }
+/* ══════════════════════════════════
+   GAME BOARD — 4 BIG CATEGORY CARDS
+══════════════════════════════════ */
+.game-wrap{
+  display:none;
+  flex-direction:column;
+  gap:20px;
+}
 
-        .no-teams {
-            color:rgba(255,255,255,.45); text-align:center; padding:40px;
-            font-size:1.05rem;
-        }
-        .no-teams i { display:block; font-size:2.8rem; color:rgba(255,215,0,.25); margin-bottom:12px; }
+/* Game header */
+.game-topbar{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  background:linear-gradient(135deg,#0f1629,#1a2040);
+  border:1.5px solid rgba(245,200,66,.2);
+  border-radius:var(--radius);padding:16px 24px;
+}
+.gt-avatar{font-size:2.8rem;line-height:1}
+.gt-msg{
+  flex:1;color:#fff;font-weight:600;font-size:1.05rem;
+  background:rgba(0,0,0,.3);padding:10px 20px;
+  border-radius:50px;border-left:4px solid var(--gold);
+}
+.gt-team{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;font-weight:900;font-size:1.35rem;
+  padding:10px 28px;border-radius:50px;
+  box-shadow:0 0 20px rgba(245,200,66,.4);
+}
 
-        /* Draw & start */
-        .action-row {
-            display:flex; gap:14px; flex-wrap:wrap;
-            justify-content:center; margin-top:22px;
-        }
-        .btn-draw {
-            background:linear-gradient(145deg,#FF4500,#cc3700);
-            border:3px solid var(--gold); color:#fff;
-            font-weight:900; font-size:1.35rem; padding:16px 44px;
-            border-radius:50px; cursor:pointer; transition:.2s;
-            text-transform:uppercase; letter-spacing:1px;
-            box-shadow:0 8px 0 #8B0000,0 0 35px rgba(255,69,0,.4);
-            display:inline-flex; align-items:center; gap:12px;
-        }
-        .btn-draw:hover { transform:scale(1.04); box-shadow:0 8px 0 #8B0000,0 0 55px #FF4500; }
-        .btn-draw:disabled { opacity:.45; cursor:not-allowed; transform:none; }
+/* Category cards grid */
+.cat-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+@media(max-width:900px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
 
-        .btn-start {
-            background:linear-gradient(145deg,#27ae60,#1a7a40);
-            border:3px solid var(--gold); color:#fff;
-            font-weight:900; font-size:1.35rem; padding:16px 44px;
-            border-radius:50px; cursor:pointer; transition:.2s;
-            text-transform:uppercase; letter-spacing:1px;
-            box-shadow:0 8px 0 #0d5c2a,0 0 35px rgba(39,174,96,.4);
-            display:none; align-items:center; gap:12px;
-        }
-        .btn-start:hover { transform:scale(1.04); }
+.cat-card{
+  border-radius:20px;overflow:hidden;
+  cursor:pointer;transition:.25s;
+  border:2px solid transparent;
+}
+.cat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.cat-card.cat-1{background:linear-gradient(145deg,#1e3a8a,#1d4ed8);border-color:rgba(96,165,250,.3)}
+.cat-card.cat-2{background:linear-gradient(145deg,#78350f,#b45309);border-color:rgba(251,191,36,.3)}
+.cat-card.cat-3{background:linear-gradient(145deg,#4c1d95,#7e22ce);border-color:rgba(192,132,252,.3)}
+.cat-card.cat-4{background:linear-gradient(145deg,#14532d,#15803d);border-color:rgba(74,222,128,.3)}
 
-        .btn-admin {
-            background:rgba(255,255,255,.08); border:2px solid rgba(255,215,0,.45);
-            color:var(--gold); font-weight:700; padding:10px 20px;
-            border-radius:25px; cursor:pointer; transition:.2s;
-            font-size:.95rem; display:inline-flex; align-items:center; gap:7px;
-        }
-        .btn-admin:hover { background:var(--gold); color:#000; }
+.cat-card-inner{padding:24px 20px;text-align:center}
+.cat-emoji{font-size:3rem;margin-bottom:10px;display:block}
+.cat-title-text{font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:.5px}
+.cat-sub-count{font-size:.8rem;color:rgba(255,255,255,.6);margin-top:4px}
+.cat-progress{
+  height:4px;background:rgba(0,0,0,.3);
+  margin:12px 16px 16px;border-radius:2px;overflow:hidden;
+}
+.cat-progress-bar{height:100%;background:rgba(255,255,255,.5);border-radius:2px;transition:.3s}
 
-        .draw-result-box {
-            display:none; margin-top:18px; padding:18px 30px;
-            background:linear-gradient(135deg,var(--dark2),var(--dark));
-            border:3px solid var(--gold); border-radius:18px; text-align:center;
-        }
-        .draw-result-box.show { display:block; }
-        .draw-winner-name { font-size:1.9rem; font-weight:900; color:var(--gold); text-shadow:0 0 20px gold; }
-        .draw-hint { color:#E0E8FF; font-size:.95rem; margin-top:6px; }
+/* Subcategory view */
+.subcat-view{display:none;flex-direction:column;gap:16px}
+.subcat-header{
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(135deg,#0f1629,#1a2040);
+  border-radius:var(--radius);padding:16px 22px;
+}
+.back-btn{
+  background:rgba(255,255,255,.1);border:none;color:#fff;
+  padding:8px 16px;border-radius:50px;cursor:pointer;
+  font-size:.88rem;font-weight:700;transition:.2s;
+  display:flex;align-items:center;gap:6px;
+}
+.back-btn:hover{background:rgba(255,255,255,.18)}
+.subcat-title{font-size:1.3rem;font-weight:900;flex:1}
+.subcat-emoji{font-size:2rem}
 
-        /* ═══════════════ DRAW ANIMATION MODAL ═══════════════ */
-        .draw-modal {
-            display:none; position:fixed; inset:0;
-            background:rgba(0,0,0,.97);
-            align-items:center; justify-content:center;
-            flex-direction:column; z-index:2000; text-align:center;
-        }
-        .draw-modal.on { display:flex; }
-        .draw-modal-title { color:#fff; font-size:2.5rem; font-weight:900; margin-bottom:15px; }
-        .draw-spin-box {
-            font-size:2.8rem; font-weight:900; color:var(--gold);
-            padding:28px 60px; border:4px solid var(--gold); border-radius:20px;
-            background:rgba(0,0,0,.5); min-width:380px;
-            animation:boxGlow .2s ease-in-out infinite alternate;
-        }
-        @keyframes boxGlow {
-            from { box-shadow:0 0 20px gold; }
-            to   { box-shadow:0 0 60px gold,0 0 100px orange; }
-        }
-        .draw-reveal {
-            display:none; font-size:3.5rem; font-weight:900; color:var(--gold);
-            padding:35px 60px; border:5px solid var(--gold); border-radius:22px;
-            background:rgba(0,0,0,.5); text-shadow:0 0 40px gold;
-            animation:revPulse .5s ease-in-out infinite alternate;
-        }
-        @keyframes revPulse { to { transform:scale(1.04); } }
-        .draw-sub { color:#E0E8FF; font-size:1.25rem; margin:12px 0; }
-        .draw-ok-btn {
-            display:none; margin-top:25px;
-            background:var(--gold); border:none; color:#000;
-            font-weight:900; font-size:1.2rem; padding:15px 50px;
-            border-radius:25px; cursor:pointer;
-        }
+.subcat-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+}
+@media(max-width:700px){.subcat-grid{grid-template-columns:1fr}}
 
-        /* Confetti canvas */
-        #confettiCanvas { position:fixed; inset:0; pointer-events:none; z-index:1999; }
+.subcat-card{
+  border-radius:16px;padding:20px;
+  cursor:pointer;transition:.22s;
+  border:2px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.05);
+  text-align:center;
+}
+.subcat-card:hover{background:rgba(255,255,255,.1);transform:translateY(-3px)}
+.subcat-icon{font-size:2.2rem;margin-bottom:8px;display:block}
+.subcat-name{font-size:1rem;font-weight:800;color:#fff}
+.subcat-pts{font-size:.78rem;color:rgba(255,255,255,.5);margin-top:4px}
+.subcat-done{font-size:.75rem;color:#4ade80;margin-top:3px}
 
-        /* ═══════════════ GAME ═══════════════ */
-        .game-box {
-            display:none;
-            background:rgba(0,15,30,.85); border:3px solid var(--gold);
-            border-radius:25px; padding:35px;
-            box-shadow:0 30px 60px rgba(0,0,0,.7),0 0 50px rgba(255,215,0,.25);
-        }
-        .g-header {
-            display:flex; align-items:center; gap:18px; flex-wrap:wrap;
-            background:rgba(0,0,0,.5); border-radius:25px; padding:14px 28px;
-            border:2px solid var(--gold); margin-bottom:28px;
-        }
-        .g-avatar { font-size:3.5rem; color:var(--gold); filter:drop-shadow(0 0 12px gold); }
-        .g-msg {
-            color:#fff; font-weight:600; font-size:1.15rem;
-            background:linear-gradient(90deg,var(--dark2),#002b4a);
-            padding:11px 28px; border-radius:25px; border-left:6px solid var(--gold);
-        }
-        .g-active-team {
-            margin-left:auto; background:linear-gradient(135deg,var(--gold),#ffed4d);
-            color:var(--dark); font-weight:900; font-size:1.65rem;
-            padding:10px 36px; border-radius:25px; border:3px solid #fff;
-            box-shadow:0 0 25px gold;
-        }
+/* Questions view */
+.qlist-view{display:none;flex-direction:column;gap:16px}
+.qlist-header{
+  display:flex;align-items:center;gap:12px;
+  background:linear-gradient(135deg,#0f1629,#1a2040);
+  border-radius:var(--radius);padding:14px 20px;
+}
+.qlist-title{font-size:1.15rem;font-weight:900;flex:1}
 
-        .categories { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin:25px 0; }
-        .cat-col { display:flex; flex-direction:column; gap:13px; }
-        .cat-title {
-            background:linear-gradient(135deg,var(--gold),var(--gold2));
-            color:var(--dark); font-weight:900; font-size:1.1rem;
-            text-transform:uppercase; padding:18px 8px; text-align:center;
-            border-radius:18px; box-shadow:0 8px 0 var(--shadow); border:2px solid #ffe066;
-        }
-        .q-card {
-            background:rgba(0,30,60,.9); border:3px solid var(--gold);
-            border-radius:18px; padding:18px 5px; text-align:center;
-            font-size:2.3rem; font-weight:900; color:var(--gold);
-            cursor:pointer; transition:.18s; position:relative;
-            box-shadow:0 8px 0 #001c35;
-            display:flex; flex-direction:column; align-items:center; gap:5px;
-        }
-        .q-card small {
-            font-size:.85rem; color:#b8d0e0;
-            background:rgba(0,0,0,.5); padding:3px 13px;
-            border-radius:18px; border:1px solid var(--gold);
-        }
-        .q-card .si {
-            position:absolute; top:-9px; right:-9px;
-            width:28px; height:28px; border-radius:50%;
-            border:2px solid var(--gold);
-            display:flex; align-items:center; justify-content:center;
-            font-size:.85rem; color:#fff;
-        }
-        .q-card .si.used { background:#27ae60; }
-        .q-card .si.free { background:#e67e22; }
-        .q-card:hover:not(.used-card) { transform:translateY(-5px); box-shadow:0 14px 0 #001c35,0 0 35px gold; }
-        .q-card.used-card { opacity:.65; pointer-events:none; filter:grayscale(.5); }
+.q-cards-row{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+}
+@media(max-width:700px){.q-cards-row{grid-template-columns:repeat(2,1fr)}}
 
-        /* Scoreboard */
-        .scoreboard { display:flex; flex-wrap:wrap; gap:13px; margin-top:22px; justify-content:center; }
-        .sc-card {
-            background:linear-gradient(145deg,var(--dark2),var(--dark));
-            border:3px solid var(--gold); border-radius:15px;
-            padding:12px 18px; text-align:center; flex:1 1 130px;
-            box-shadow:0 5px 0 var(--shadow); transition:.3s;
-        }
-        .sc-card.active { border-color:#4ECDC4; box-shadow:0 0 22px #4ECDC4; transform:scale(1.06); }
-        .sc-name  { color:var(--gold); font-weight:800; font-size:.92rem; margin-bottom:4px; }
-        .sc-mem   { color:rgba(255,255,255,.55); font-size:.72rem; margin-bottom:7px; line-height:1.3; }
-        .sc-score { color:#fff; font-weight:900; font-size:1.4rem; }
-        .q-counter { color:rgba(255,255,255,.7); font-size:1rem; text-align:center; margin-top:12px; }
+.q-card{
+  border-radius:16px;padding:24px 12px;
+  text-align:center;cursor:pointer;transition:.22s;
+  border:2px solid transparent;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.q-card:hover:not(.q-used){transform:translateY(-4px)}
+.q-card.q-free{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+.q-card.q-used{background:rgba(34,197,94,.07);border-color:rgba(34,197,94,.25);opacity:.7;pointer-events:none;cursor:default}
+.q-pts{font-size:2.2rem;font-weight:900;color:var(--gold)}
+.q-pts-label{font-size:.78rem;color:rgba(255,255,255,.5)}
+.q-status{font-size:1.2rem}
 
-        /* ═══════════════ MODAL ═══════════════ */
-        .modal {
-            display:none; position:fixed; inset:0;
-            background:rgba(0,0,0,.95); backdrop-filter:blur(15px);
-            align-items:center; justify-content:center; z-index:1000;
-        }
-        .modal.on { display:flex; }
-        .modal-inner {
-            background:linear-gradient(145deg,var(--dark2),var(--dark));
-            border:4px solid var(--gold); border-radius:28px;
-            width:90%; max-width:880px; padding:45px; color:#fff;
-            box-shadow:0 40px 80px #000,0 0 50px gold;
-        }
-        .m-head {
-            display:flex; justify-content:space-between; align-items:center;
-            margin-bottom:25px; padding-bottom:18px; border-bottom:2px solid var(--gold);
-            font-size:1.7rem; font-weight:700; color:var(--gold);
-        }
-        .timer {
-            font-size:2.8rem; font-weight:900; color:var(--gold);
-            background:rgba(0,0,0,.5); padding:9px 28px;
-            border-radius:25px; border:2px solid var(--gold);
-        }
-        .q-text {
-            font-size:1.65rem; font-weight:700; text-align:center;
-            padding:25px; line-height:1.5; margin-bottom:25px;
-            background:rgba(0,0,0,.4); border-radius:18px;
-            border:1px solid rgba(255,215,0,.25);
-        }
-        .answers { display:grid; grid-template-columns:1fr 1fr; gap:13px; }
-        .ans-btn {
-            background:linear-gradient(145deg,#002b4a,var(--dark2));
-            border:3px solid var(--gold); border-radius:25px;
-            padding:22px 18px; font-size:1.2rem; font-weight:600; color:#fff;
-            display:flex; align-items:center; gap:16px;
-            cursor:pointer; transition:.18s; text-align:left;
-            box-shadow:0 7px 0 var(--shadow);
-        }
-        .ans-btn:hover:not(.no-click) { background:var(--gold); color:var(--dark); transform:scale(1.02); }
-        .ans-btn.correct { background:#27ae60; border-color:#2ecc71; pointer-events:none; }
-        .ans-btn.wrong   { background:#c0392b; border-color:#e74c3c; opacity:.9; pointer-events:none; }
-        .ans-btn.no-click { opacity:.3; pointer-events:none; }
-        .pfx {
-            font-weight:900; background:var(--gold); color:var(--dark);
-            border-radius:50%; width:46px; height:46px; min-width:46px;
-            display:inline-flex; align-items:center; justify-content:center;
-            font-size:1.35rem; box-shadow:0 3px 0 var(--shadow);
-        }
-        .m-foot { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-top:18px; }
-        .help-btns { display:flex; gap:12px; }
-        .help-btn {
-            background:linear-gradient(145deg,#333,#222); border:2px solid var(--gold);
-            color:var(--gold); border-radius:25px; padding:13px 26px;
-            font-weight:700; cursor:pointer; transition:.18s;
-            font-size:1.1rem; display:flex; align-items:center; gap:9px;
-        }
-        .help-btn:hover { background:var(--gold); color:#000; }
-        .help-btn.off { opacity:.3; pointer-events:none; }
-        .close-btn {
-            background:linear-gradient(145deg,#8b0000,#660000);
-            border:2px solid #ff6b6b; color:#fff; border-radius:25px;
-            padding:13px 36px; font-weight:700; cursor:pointer; transition:.18s; font-size:1.1rem;
-        }
-        .close-btn:hover { background:#a00; }
-        .law-hint {
-            display:none; margin-top:18px;
-            background:var(--dark); border-left:9px solid var(--gold);
-            border:1px solid var(--gold); border-left-width:9px;
-            padding:18px 25px; border-radius:18px;
-            color:var(--gold); font-weight:600; font-size:1.1rem;
-        }
-        .law-hint.on { display:block; }
+/* Scoreboard */
+.scoreboard{
+  display:flex;flex-wrap:wrap;gap:12px;
+  background:linear-gradient(135deg,#0f1629,#1a2040);
+  border-radius:var(--radius);padding:16px 20px;
+  border:1.5px solid rgba(255,255,255,.06);
+}
+.sc-card{
+  flex:1 1 130px;
+  background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.08);
+  border-radius:12px;padding:12px 16px;text-align:center;
+  transition:.3s;
+}
+.sc-card.sc-active{
+  border-color:var(--gold);
+  background:rgba(245,200,66,.08);
+  box-shadow:0 0 18px rgba(245,200,66,.2);
+  transform:scale(1.04);
+}
+.sc-name{color:var(--gold);font-weight:800;font-size:.88rem;margin-bottom:3px}
+.sc-mem{color:rgba(255,255,255,.45);font-size:.7rem;margin-bottom:6px;line-height:1.3}
+.sc-score{color:#fff;font-weight:900;font-size:1.35rem}
+.sc-score small{font-size:.6em;color:var(--gold)}
 
-        /* ═══════════════ FINISH ═══════════════ */
-        .finish-screen {
-            text-align:center; padding:45px;
-            background:linear-gradient(145deg,var(--dark2),var(--dark));
-            border-radius:25px; border:4px solid var(--gold); box-shadow:0 0 50px gold;
-        }
-        .finish-screen h2 { font-size:3.5rem; color:var(--gold); margin-bottom:25px; }
-        .medal { font-size:7rem; margin:20px; }
-        .f-rank-1 { color:var(--gold); font-weight:900; font-size:1.4rem; margin:8px 0; }
-        .f-rank-2 { color:#C0C0C0; font-weight:800; font-size:1.2rem; margin:8px 0; }
-        .f-rank-3 { color:#CD7F32; font-weight:800; font-size:1.1rem; margin:8px 0; }
-        .stats-tbl { background:rgba(255,255,255,.1); border-radius:18px; padding:25px; margin:22px 0; border:2px solid var(--gold); }
-        .stats-row { display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid rgba(255,215,0,.25); font-size:1rem; }
-        .stats-row:last-child { border-bottom:none; }
-        .restart-btn {
-            background:var(--gold); border:3px solid #fff; color:var(--dark);
-            font-weight:900; padding:18px 55px; border-radius:25px;
-            font-size:1.8rem; margin-top:30px; cursor:pointer;
-        }
-        .restart-btn:hover { transform:scale(1.08); box-shadow:0 0 35px gold; }
+/* ══════════════════════════════════
+   MODALS
+══════════════════════════════════ */
+.overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.9);backdrop-filter:blur(12px);
+  align-items:center;justify-content:center;z-index:100;
+}
+.overlay.on{display:flex}
 
-        /* ═══════════════ TOAST ═══════════════ */
-        .toast {
-            position:fixed; bottom:35px; left:50%; transform:translateX(-50%);
-            background:linear-gradient(145deg,#c0392b,#a00);
-            color:#fff; padding:18px 45px; border-radius:25px;
-            font-weight:700; font-size:1.2rem; z-index:3000;
-            border:3px solid var(--gold); box-shadow:0 8px 25px rgba(0,0,0,.5);
-            animation:toastAnim 2.5s ease-in-out forwards;
-        }
-        @keyframes toastAnim {
-            0%   { opacity:0; transform:translateX(-50%) translateY(25px); }
-            10%  { opacity:1; transform:translateX(-50%) translateY(0); }
-            85%  { opacity:1; }
-            100% { opacity:0; transform:translateX(-50%) translateY(25px); }
-        }
+/* Question modal */
+.q-modal{
+  background:linear-gradient(145deg,#0d1120,#131929);
+  border:2px solid rgba(245,200,66,.3);
+  border-radius:24px;width:92%;max-width:860px;
+  padding:40px;box-shadow:0 0 60px rgba(245,200,66,.15);
+}
+.qm-head{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:24px;padding-bottom:18px;
+  border-bottom:1.5px solid rgba(255,255,255,.08);
+}
+.qm-cat{color:var(--gold);font-weight:800;font-size:1.3rem;display:flex;align-items:center;gap:8px}
+.timer-box{
+  background:rgba(0,0,0,.4);border:2px solid var(--gold);
+  border-radius:50px;padding:8px 24px;
+  font-size:2.2rem;font-weight:900;color:var(--gold);
+  min-width:80px;text-align:center;
+}
+.timer-box.urgent{color:#f87171;border-color:#f87171}
+.q-body{
+  font-size:1.55rem;font-weight:700;text-align:center;
+  line-height:1.55;padding:24px;
+  background:rgba(0,0,0,.3);border-radius:16px;
+  border:1px solid rgba(255,255,255,.06);
+  margin-bottom:24px;
+}
+.answers-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.answers-grid{grid-template-columns:1fr}}
+.ans{
+  background:rgba(255,255,255,.05);
+  border:2px solid rgba(255,255,255,.12);
+  border-radius:16px;padding:18px 16px;
+  font-size:1.1rem;font-weight:600;color:#fff;
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;transition:.18s;text-align:left;
+}
+.ans:hover:not(.no-ptr){background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3);transform:scale(1.01)}
+.ans.correct{background:rgba(34,197,94,.2);border-color:#22c55e;pointer-events:none}
+.ans.wrong  {background:rgba(239,68,68,.2); border-color:#ef4444;opacity:.85;pointer-events:none}
+.ans.no-ptr {opacity:.3;pointer-events:none}
+.ans-prefix{
+  background:var(--gold);color:#000;border-radius:50%;
+  width:38px;height:38px;min-width:38px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:1rem;
+}
+.qm-foot{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;margin-top:20px;flex-wrap:wrap;
+}
+.help-row{display:flex;gap:10px}
+.help-btn{
+  background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(255,255,255,.15);
+  color:#fff;border-radius:50px;
+  padding:11px 22px;font-weight:700;cursor:pointer;transition:.18s;
+  font-size:.92rem;display:flex;align-items:center;gap:8px;
+}
+.help-btn:hover{background:rgba(255,255,255,.14)}
+.help-btn.off{opacity:.3;pointer-events:none}
+.close-q{
+  background:rgba(239,68,68,.15);border:1.5px solid rgba(239,68,68,.3);
+  color:#fca5a5;border-radius:50px;padding:11px 28px;
+  font-weight:700;cursor:pointer;transition:.18s;font-size:.92rem;
+}
+.close-q:hover{background:rgba(239,68,68,.25)}
+.law-box{
+  display:none;margin-top:16px;
+  background:rgba(245,200,66,.07);
+  border-left:4px solid var(--gold);
+  border-radius:12px;padding:16px 20px;
+  color:var(--gold);font-weight:600;font-size:1rem;line-height:1.5;
+}
+.law-box.on{display:block}
 
-        /* ═══════════════ PHONE SCREEN ═══════════════ */
-        .phone-screen {
-            display:none; position:fixed; inset:0; z-index:5000;
-            background:linear-gradient(145deg,#000a1f,#001a33);
-            overflow-y:auto; flex-direction:column;
-        }
-        .phone-screen.on { display:flex; }
+/* Draw modal */
+.draw-modal{
+  background:linear-gradient(145deg,#0d1120,#131929);
+  border:2px solid rgba(245,200,66,.3);
+  border-radius:24px;padding:48px 40px;
+  text-align:center;max-width:560px;width:92%;
+}
+.dm-title{font-size:2rem;font-weight:900;color:#fff;margin-bottom:24px}
+.dm-spinner{
+  font-size:2.2rem;font-weight:900;color:var(--gold);
+  padding:22px 40px;border:3px solid var(--gold);
+  border-radius:16px;background:rgba(0,0,0,.4);
+  display:inline-block;min-width:320px;
+  animation:glowPulse .2s ease-in-out infinite alternate;
+}
+@keyframes glowPulse{
+  from{box-shadow:0 0 15px rgba(245,200,66,.3)}
+  to  {box-shadow:0 0 40px rgba(245,200,66,.7),0 0 70px rgba(245,200,66,.3)}
+}
+.dm-reveal{
+  display:none;
+  font-size:2.6rem;font-weight:900;color:var(--gold);
+  padding:28px 40px;border:3px solid var(--gold);
+  border-radius:16px;background:rgba(0,0,0,.4);
+  text-shadow:0 0 30px rgba(245,200,66,.6);
+  animation:revPulse .6s ease-in-out infinite alternate;
+}
+@keyframes revPulse{to{transform:scale(1.03)}}
+.dm-sub{color:rgba(255,255,255,.6);font-size:1.1rem;margin:16px 0}
+.dm-ok{
+  margin-top:24px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border:none;color:#000;font-weight:900;
+  font-size:1.1rem;padding:14px 44px;border-radius:50px;
+  cursor:pointer;display:none;
+}
 
-        /* Step bar */
-        .step-bar {
-            display:flex; align-items:center; justify-content:center;
-            gap:0; padding:18px; background:rgba(0,0,0,.5);
-            border-bottom:2px solid var(--gold); flex-shrink:0;
-        }
-        .s-dot {
-            width:34px; height:34px; border-radius:50%;
-            background:rgba(255,215,0,.15); border:2px solid rgba(255,215,0,.4);
-            display:flex; align-items:center; justify-content:center;
-            color:rgba(255,215,0,.5); font-weight:900; font-size:.95rem; transition:.3s;
-        }
-        .s-dot.cur  { background:var(--gold); border-color:var(--gold); color:#000; }
-        .s-dot.done { background:#27ae60; border-color:#27ae60; color:#fff; }
-        .s-line { width:55px; height:3px; background:rgba(255,215,0,.25); transition:.3s; }
-        .s-line.done { background:var(--gold); }
+/* Finish */
+.finish-wrap{
+  background:linear-gradient(145deg,#0d1120,#131929);
+  border:2px solid rgba(245,200,66,.3);
+  border-radius:24px;padding:48px;text-align:center;
+  margin-top:10px;
+}
+.fin-title{font-size:3rem;font-weight:900;color:var(--gold);margin-bottom:16px}
+.fin-medal{font-size:6rem;margin:16px 0}
+.fin-rank{margin:8px 0;font-weight:800;font-size:1.2rem}
+.fin-r1{color:var(--gold)}
+.fin-r2{color:#d1d5db}
+.fin-r3{color:#cd7f32}
+.stats-box{
+  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);
+  border-radius:16px;padding:20px;margin:20px 0;
+}
+.stat-row{
+  display:flex;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:.95rem;
+}
+.stat-row:last-child{border:none}
+.restart-btn{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border:none;color:#000;font-weight:900;
+  font-size:1.4rem;padding:16px 50px;
+  border-radius:50px;cursor:pointer;margin-top:24px;
+}
+.restart-btn:hover{transform:scale(1.05)}
 
-        /* Steps */
-        .p-step { display:none; flex:1; flex-direction:column; align-items:center; padding:30px 18px; }
-        .p-step.on { display:flex; }
-        .p-icon { font-size:4.5rem; color:var(--gold); margin-bottom:18px; animation:float 2.5s ease-in-out infinite; }
-        @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
-        .p-title { font-size:1.9rem; font-weight:900; color:var(--gold); text-align:center; margin-bottom:8px; }
-        .p-sub   { color:rgba(255,255,255,.65); text-align:center; margin-bottom:25px; font-size:.95rem; }
-        .p-input {
-            width:100%; max-width:440px; background:rgba(255,255,255,.1);
-            border:3px solid var(--gold); border-radius:18px; padding:18px 22px;
-            color:#fff; font-size:1.25rem; outline:none; text-align:center;
-            font-family:'Montserrat',sans-serif; font-weight:600; margin-bottom:18px;
-        }
-        .p-input::placeholder { color:rgba(255,255,255,.35); }
-        .p-input:focus { box-shadow:0 0 18px rgba(255,215,0,.5); }
-        .p-btn {
-            width:100%; max-width:440px; background:linear-gradient(145deg,var(--gold),var(--gold2));
-            border:none; color:var(--dark); font-weight:900; font-size:1.3rem;
-            padding:18px; border-radius:18px; cursor:pointer; transition:.18s;
-            text-transform:uppercase; letter-spacing:1px; box-shadow:0 7px 0 var(--shadow);
-            display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:12px;
-        }
-        .p-btn:hover { transform:scale(1.02); background:#ffed4d; }
-        .p-btn.sec {
-            background:rgba(255,255,255,.1); border:2px solid rgba(255,215,0,.45);
-            color:var(--gold); box-shadow:none;
-        }
-        .p-btn.sec:hover { background:rgba(255,215,0,.2); }
-        .team-label {
-            width:100%; max-width:440px; background:rgba(255,215,0,.12);
-            border:2px solid var(--gold); border-radius:14px; padding:11px 20px;
-            color:var(--gold); font-weight:900; font-size:1.1rem;
-            text-align:center; margin-bottom:20px;
-        }
-        .team-label span { color:#fff; font-weight:600; font-size:.9rem; display:block; }
-        .members-list { width:100%; max-width:440px; margin-bottom:16px; }
-        .m-item {
-            display:flex; align-items:center; justify-content:space-between;
-            background:rgba(255,215,0,.1); border:2px solid rgba(255,215,0,.35);
-            border-radius:13px; padding:11px 16px; margin-bottom:9px;
-            color:#fff; font-weight:600; font-size:1.05rem; animation:popIn .3s ease;
-        }
-        .m-item i { color:var(--gold); margin-right:7px; }
-        .rm-btn {
-            background:rgba(255,0,0,.3); border:1px solid #ff6b6b; color:#ff6b6b;
-            border-radius:50%; width:28px; height:28px;
-            display:flex; align-items:center; justify-content:center;
-            cursor:pointer; transition:.18s; flex-shrink:0;
-        }
-        .rm-btn:hover { background:#f00; color:#fff; }
+/* Toast */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,#1e293b,#0f172a);
+  border:1.5px solid rgba(245,200,66,.3);
+  color:#fff;padding:14px 32px;border-radius:50px;
+  font-weight:700;font-size:1rem;z-index:500;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+  animation:toastAnim 2.5s ease-in-out forwards;
+}
+@keyframes toastAnim{
+  0%  {opacity:0;transform:translateX(-50%) translateY(20px)}
+  10% {opacity:1;transform:translateX(-50%) translateY(0)}
+  85% {opacity:1}
+  100%{opacity:0;transform:translateX(-50%) translateY(20px)}
+}
 
-        /* Success */
-        .success-wrap { text-align:center; display:flex; flex-direction:column; align-items:center; }
-        .suc-icon { font-size:5.5rem; margin-bottom:18px; animation:bounce .5s ease; }
-        @keyframes bounce { 0%{transform:scale(0)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
-        .suc-title { font-size:2.3rem; font-weight:900; color:#27ae60; margin-bottom:8px; }
-        .suc-tname { font-size:1.7rem; font-weight:900; color:var(--gold); margin:12px 0; }
-        .suc-mem   { color:rgba(255,255,255,.65); font-size:1rem; margin-bottom:22px; }
-        .suc-wait {
-            width:100%; max-width:440px; background:rgba(255,215,0,.1);
-            border:2px solid rgba(255,215,0,.4); border-radius:14px;
-            padding:18px; color:#E0E8FF; font-size:.95rem; line-height:1.6;
-        }
-        .pulse-dot {
-            display:inline-block; width:10px; height:10px; border-radius:50%;
-            background:#27ae60; margin-right:6px;
-            animation:pdot 1.5s ease-in-out infinite;
-        }
-        @keyframes pdot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:.6} }
+/* ══════════════════════════════════
+   PHONE SCREEN
+══════════════════════════════════ */
+#phoneScreen{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:linear-gradient(145deg,#06080f,#0d1120);
+  overflow-y:auto;flex-direction:column;
+}
+#phoneScreen.on{display:flex}
 
-        /* Sync dot */
-        .sync-dot-wrap {
-            position:fixed; bottom:14px; right:14px; z-index:100;
-            background:rgba(0,0,0,.75); border:1px solid rgba(255,215,0,.25);
-            border-radius:18px; padding:7px 13px;
-            display:flex; align-items:center; gap:6px;
-            color:rgba(255,255,255,.55); font-size:.78rem;
-        }
-        .sync-dot { width:8px; height:8px; border-radius:50%; background:#27ae60; animation:pdot 2s ease-in-out infinite; }
+.phone-topbar{
+  background:rgba(0,0,0,.5);
+  border-bottom:1.5px solid rgba(245,200,66,.15);
+  padding:16px 20px;display:flex;
+  align-items:center;justify-content:center;gap:0;
+  flex-shrink:0;
+}
+.sd{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.35);font-weight:900;font-size:.88rem;transition:.3s;
+}
+.sd.cur {background:var(--gold);border-color:var(--gold);color:#000}
+.sd.done{background:#22c55e;border-color:#22c55e;color:#fff}
+.sl{width:48px;height:2px;background:rgba(255,255,255,.1);transition:.3s}
+.sl.done{background:var(--gold)}
 
-        /* ═══════════════ RESPONSIVE ═══════════════ */
-        @media(max-width:900px) {
-            .categories { grid-template-columns:1fr 1fr; }
-            .answers    { grid-template-columns:1fr; }
-        }
-        @media(max-width:560px) {
-            body { padding:10px; }
-            .law-title { font-size:2rem; }
-            .modal-inner { padding:22px; }
-        }
-    </style>
+.p-step{display:none;flex:1;flex-direction:column;align-items:center;padding:32px 20px}
+.p-step.on{display:flex}
+
+.p-bigicon{font-size:5rem;margin-bottom:16px;animation:floatIcon 3s ease-in-out infinite}
+@keyframes floatIcon{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.p-title{font-size:1.9rem;font-weight:900;color:var(--gold);text-align:center;margin-bottom:6px}
+.p-sub{color:rgba(255,255,255,.55);text-align:center;margin-bottom:24px;font-size:.92rem}
+
+.p-inp{
+  width:100%;max-width:440px;
+  background:rgba(255,255,255,.07);
+  border:2px solid rgba(245,200,66,.3);
+  border-radius:16px;padding:16px 20px;
+  color:#fff;font-size:1.2rem;outline:none;
+  text-align:center;font-family:'Montserrat',sans-serif;
+  font-weight:600;margin-bottom:16px;transition:.2s;
+}
+.p-inp::placeholder{color:rgba(255,255,255,.25)}
+.p-inp:focus{border-color:var(--gold);box-shadow:0 0 16px rgba(245,200,66,.2)}
+
+.p-btn{
+  width:100%;max-width:440px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border:none;color:#000;font-weight:900;font-size:1.2rem;
+  padding:17px;border-radius:16px;cursor:pointer;transition:.18s;
+  text-transform:uppercase;letter-spacing:.5px;
+  display:flex;align-items:center;justify-content:center;
+  gap:9px;margin-bottom:11px;
+}
+.p-btn:hover{transform:scale(1.02);filter:brightness(1.05)}
+.p-btn:active{transform:scale(.98)}
+.p-btn.ghost{
+  background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.8);
+}
+.p-btn.ghost:hover{background:rgba(255,255,255,.12)}
+
+.team-label-phone{
+  width:100%;max-width:440px;
+  background:rgba(245,200,66,.08);border:1.5px solid rgba(245,200,66,.25);
+  border-radius:12px;padding:10px 18px;margin-bottom:18px;
+  color:var(--gold);font-weight:900;font-size:1.05rem;text-align:center;
+}
+.team-label-phone small{color:rgba(255,255,255,.45);font-weight:600;font-size:.78rem;display:block}
+
+.mems-list{width:100%;max-width:440px;margin-bottom:14px}
+.mem-item{
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:12px;padding:10px 14px;margin-bottom:8px;
+  color:#fff;font-weight:600;font-size:1rem;animation:popIn .3s ease;
+}
+.mem-left{display:flex;align-items:center;gap:8px}
+.mem-icon{font-size:.9rem;opacity:.7}
+.rm-mem{
+  background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.3);
+  color:#fca5a5;border-radius:50%;width:26px;height:26px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.18s;font-size:.85rem;
+}
+.rm-mem:hover{background:rgba(239,68,68,.4)}
+
+/* Success */
+.suc-wrap{text-align:center;display:flex;flex-direction:column;align-items:center}
+.suc-icon{font-size:5rem;margin-bottom:14px;animation:bounce .5s ease}
+@keyframes bounce{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.suc-title{font-size:2rem;font-weight:900;color:#4ade80;margin-bottom:6px}
+.suc-tname{font-size:1.6rem;font-weight:900;color:var(--gold);margin:10px 0}
+.suc-mem{color:rgba(255,255,255,.55);font-size:.92rem;margin-bottom:20px}
+.suc-wait{
+  width:100%;max-width:420px;
+  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:18px;color:rgba(255,255,255,.65);
+  font-size:.9rem;line-height:1.6;
+}
+.pulse{
+  display:inline-block;width:9px;height:9px;border-radius:50%;
+  background:#22c55e;margin-right:6px;
+  animation:pd 1.5s ease-in-out infinite;
+}
+@keyframes pd{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.55}}
+
+/* sync bar */
+.sync-bar{
+  position:fixed;bottom:12px;right:12px;z-index:50;
+  background:rgba(6,8,15,.85);border:1px solid rgba(255,255,255,.1);
+  border-radius:50px;padding:6px 14px;
+  display:flex;align-items:center;gap:6px;
+  color:rgba(255,255,255,.45);font-size:.75rem;
+}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pd 2s ease-in-out infinite}
+
+/* Confetti */
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:300}
+
+@media(max-width:600px){
+  #mainScreen{padding:14px;gap:14px}
+  .cat-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .q-modal{padding:24px 18px}
+  .q-body{font-size:1.25rem;padding:18px}
+  .answers-grid{gap:8px}
+}
+</style>
 </head>
 <body>
 
-<!-- ════════════════════════════════════
-     MAIN / PROJECTOR SCREEN
-════════════════════════════════════ -->
-<div class="wrapper" id="mainScreen">
+<!-- ════════════════════════════════
+  MAIN SCREEN
+════════════════════════════════ -->
+<div id="mainScreen">
 
-    <!-- Header -->
-    <div class="law-header">
-        <div class="law-title">ЗАҢ ЖӘНЕ ТӘРТІП</div>
-        <div class="law-subtitle">Мен өз құқығымды білемін!</div>
-        <div class="law-icons">
-            <div class="law-icon"><i class="fas fa-scale-balanced"></i></div>
-            <div class="law-icon"><i class="fas fa-gavel"></i></div>
-            <div class="law-icon"><i class="fas fa-scroll"></i></div>
-        </div>
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <span class="logo-icon">🏆</span>
+      <div class="logo-text">
+        <h1>БІЛІМ САЙЫСЫ</h1>
+        <p>Командалық викторина ойыны</p>
+      </div>
+    </div>
+    <div class="topbar-badges">
+      <span class="badge">🎯 Интерактивті ойын</span>
+      <span class="badge blue" id="mainCount">0 команда</span>
+    </div>
+  </div>
+
+  <!-- Registration -->
+  <div id="regPanel" class="reg-panel">
+    <!-- QR -->
+    <div class="qr-block">
+      <h3>📱 QR-КОД</h3>
+      <div id="qrcode"></div>
+      <div class="qr-steps">
+        <div class="qr-step"><span class="qr-num">1</span>QR кодты сканерле</div>
+        <div class="qr-step"><span class="qr-num">2</span>Команда атын жаз</div>
+        <div class="qr-step"><span class="qr-num">3</span>Мүшелерді қос</div>
+        <div class="qr-step"><span class="qr-num">4</span>Тіркеуді аяқта</div>
+      </div>
     </div>
 
-    <!-- Firebase setup banner (hidden when configured) -->
-    <div class="setup-banner" id="setupBanner">
-        <h3>⚙️ Сначала настрой Firebase (разово, 5 минут)</h3>
-        <div class="setup-steps">
-            <div class="setup-step">
-                <span class="setup-num">1</span>
-                <div>Перейди на <a class="setup-link" href="https://firebase.google.com" target="_blank">firebase.google.com</a> → <b>Get started</b> → Создай проект</div>
-            </div>
-            <div class="setup-step">
-                <span class="setup-num">2</span>
-                <div>В проекте: <b>Build → Realtime Database → Create database → Start in test mode</b></div>
-            </div>
-            <div class="setup-step">
-                <span class="setup-num">3</span>
-                <div>Project Settings (шестерёнка) → <b>Your apps → &lt;/&gt; Web</b> → скопируй <code>firebaseConfig</code></div>
-            </div>
-            <div class="setup-step">
-                <span class="setup-num">4</span>
-                <div>Замени в <b>index.html</b> (строки 18–26) значения <code>apiKey</code>, <code>databaseURL</code> и т.д. на свои</div>
-            </div>
-            <div class="setup-step">
-                <span class="setup-num">5</span>
-                <div>Загрузи файл на <a class="setup-link" href="https://pages.github.com" target="_blank">GitHub Pages</a> или <a class="setup-link" href="https://app.netlify.com/drop" target="_blank">Netlify Drop</a> (просто перетащи файл)</div>
-            </div>
+    <!-- Teams + controls -->
+    <div class="teams-panel">
+      <div class="teams-panel-head">
+        <h3>Тіркелген командалар</h3>
+        <span class="count-pill" id="countPill">0</span>
+      </div>
+      <div class="teams-grid" id="teamsGrid">
+        <div class="no-teams" id="noTeamsMsg">
+          <span class="no-teams-icon">📲</span>
+          Командалар QR арқылы тіркелуін күтуде...
         </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-gold" id="drawBtn" disabled>🎲 Жеребе</button>
+        <button class="btn btn-green" id="startBtn">▶️ Ойынды бастау</button>
+        <button class="btn btn-ghost btn-sm" id="clearBtn">🗑 Тазалау</button>
+      </div>
+      <div class="draw-result" id="drawResult">
+        <div class="dr-winner" id="drWinner">—</div>
+        <div class="dr-hint">Бірінші ойнайды • Ойынды бастауға болады</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game area -->
+  <div class="game-wrap" id="gameWrap">
+
+    <!-- Game top bar -->
+    <div class="game-topbar">
+      <span class="gt-avatar">⚖️</span>
+      <span class="gt-msg" id="gMsg">Ойын басталды! Категория таңдаңыз</span>
+      <span class="gt-team" id="gTeam">—</span>
     </div>
 
-    <!-- Registration section -->
-    <div class="section-box" id="regSection">
-        <div class="sec-header">
-            <i class="fas fa-users"></i>
-            КОМАНДАЛАРДЫ ТІРКЕУ
-            <span style="margin-left:auto;background:var(--gold);color:#000;padding:5px 18px;border-radius:20px;font-size:1.3rem;" id="mainCount">0 ТОП</span>
-        </div>
-
-        <div class="reg-layout">
-            <!-- QR -->
-            <div class="qr-block">
-                <h4><i class="fas fa-qrcode"></i> QR-КОД</h4>
-                <div id="qrcode"></div>
-                <p style="color:#E0E8FF;font-size:.9rem;margin-top:9px;">Телефонмен сканерлеңіз</p>
-                <div class="qr-steps">
-                    <div class="qr-step"><span class="qr-num">1</span>QR сканерле</div>
-                    <div class="qr-step"><span class="qr-num">2</span>Команда атын жаз</div>
-                    <div class="qr-step"><span class="qr-num">3</span>Мүшелерді қос</div>
-                    <div class="qr-step"><span class="qr-num">4</span>Жібер</div>
-                </div>
-            </div>
-
-            <!-- Teams -->
-            <div class="teams-grid">
-                <div class="teams-top">
-                    <div class="teams-top-title"><i class="fas fa-flag"></i> Тіркелген командалар</div>
-                    <span class="count-badge" id="countBadge">0</span>
-                </div>
-                <div class="teams-cards" id="teamsCards">
-                    <div class="no-teams" id="noTeamsMsg">
-                        <i class="fas fa-qrcode"></i>
-                        QR арқылы командалар тіркелуін күтуде...
-                    </div>
-                </div>
-
-                <!-- Draw + Start -->
-                <div class="action-row">
-                    <button class="btn-draw" id="drawBtn" disabled>
-                        <i class="fas fa-random"></i> ЖЕРЕБЬЕВКА
-                    </button>
-                    <button class="btn-start" id="startBtn">
-                        <i class="fas fa-play-circle"></i> ОЙЫНДЫ БАСТАУ
-                    </button>
-                </div>
-                <div class="draw-result-box" id="drawResultBox">
-                    <div class="draw-winner-name" id="drawWinnerName">—</div>
-                    <div class="draw-hint">Бірінші ойнайды • Ойынды бастауға болады 🎯</div>
-                </div>
-
-                <div class="action-row" style="margin-top:12px;">
-                    <button class="btn-admin" id="clearBtn"><i class="fas fa-trash"></i> Тазалау</button>
-                    <button class="btn-admin" id="refreshBtn"><i class="fas fa-sync"></i> Жаңарту</button>
-                </div>
-            </div>
-        </div>
+    <!-- Board: categories / subcategories / questions (one visible at a time) -->
+    <div id="boardCats" class="cat-grid">
+      <!-- filled by JS -->
     </div>
 
-    <!-- Game section -->
-    <div class="game-box" id="gameBox">
-        <div class="g-header">
-            <span class="g-avatar"><i class="fas fa-scale-balanced"></i></span>
-            <span class="g-msg" id="gMsg">⚖️ Мен өз құқығымды білемін!</span>
-            <div class="g-active-team" id="gTeam">—</div>
-        </div>
-        <div id="gameBoard"></div>
-        <div class="scoreboard" id="scoreBoard"></div>
-        <div class="q-counter" id="qCounter"></div>
+    <div class="subcat-view" id="boardSubs">
+      <div class="subcat-header">
+        <button class="back-btn" id="backToCats">← Артқа</button>
+        <span class="subcat-emoji" id="subEmoji"></span>
+        <span class="subcat-title" id="subTitle"></span>
+      </div>
+      <div class="subcat-grid" id="subGrid"></div>
     </div>
+
+    <div class="qlist-view" id="boardQs">
+      <div class="qlist-header">
+        <button class="back-btn" id="backToSubs">← Артқа</button>
+        <span class="qlist-title" id="qlistTitle"></span>
+      </div>
+      <div class="q-cards-row" id="qCardsRow"></div>
+    </div>
+
+    <!-- Scoreboard -->
+    <div class="scoreboard" id="scoreBoard"></div>
+
+  </div><!-- /game-wrap -->
+
+</div><!-- /mainScreen -->
+
+<!-- ════════════════════════════════
+  PHONE SCREEN
+════════════════════════════════ -->
+<div id="phoneScreen">
+  <div class="phone-topbar">
+    <div class="sd cur" id="sd1">1</div>
+    <div class="sl" id="sl1"></div>
+    <div class="sd" id="sd2">2</div>
+    <div class="sl" id="sl2"></div>
+    <div class="sd" id="sd3">✓</div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="p-step on" id="ps1">
+    <div class="p-bigicon">🏆</div>
+    <div class="p-title">КОМАНДА АТЫ</div>
+    <div class="p-sub">Командаңыздың атын жазыңыз</div>
+    <input class="p-inp" type="text" id="tNameInp" placeholder="Мысалы: Жұлдыздар" maxlength="30">
+    <button class="p-btn" id="toStep2Btn">Келесі →</button>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="p-step" id="ps2">
+    <div class="p-bigicon">👥</div>
+    <div class="p-title">МҮШЕЛЕР</div>
+    <div class="p-sub">Командаңыздың мүшелерін қосыңыз</div>
+    <div class="team-label-phone">
+      <small>Команда</small>
+      <span id="shownName">—</span>
+    </div>
+    <div class="mems-list" id="memsList"></div>
+    <input class="p-inp" type="text" id="memInp" placeholder="Мүшенің аты" maxlength="40">
+    <button class="p-btn" id="addMemBtn">+ Мүше қосу</button>
+    <button class="p-btn ghost" id="finishRegBtn">✓ Тіркеуді аяқтау</button>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="p-step" id="ps3">
+    <div class="suc-wrap">
+      <div class="suc-icon">✅</div>
+      <div class="suc-title">ТІРКЕЛДІ!</div>
+      <div class="p-sub">Командаңыз сәтті тіркелді</div>
+      <div class="suc-tname" id="sucName">—</div>
+      <div class="suc-mem" id="sucMem"></div>
+      <div class="suc-wait">
+        <span class="pulse"></span>
+        Жеребені күтіңіз...<br>
+        <small style="color:rgba(255,255,255,.35);margin-top:5px;display:block">
+          Барлық командалар тіркелгенде ойын басталады
+        </small>
+      </div>
+      <button class="p-btn" id="anotherTeamBtn" style="margin-top:22px;max-width:380px">+ Тағы бір команда</button>
+    </div>
+  </div>
 </div>
 
-<!-- ════════════════════════════════════
-     PHONE SCREEN
-════════════════════════════════════ -->
-<div class="phone-screen" id="phoneScreen">
-    <!-- Step bar -->
-    <div class="step-bar">
-        <div class="s-dot cur" id="sd1">1</div>
-        <div class="s-line" id="sl1"></div>
-        <div class="s-dot" id="sd2">2</div>
-        <div class="s-line" id="sl2"></div>
-        <div class="s-dot" id="sd3"><i class="fas fa-check" style="font-size:.75rem;"></i></div>
-    </div>
-
-    <!-- Step 1: Team name -->
-    <div class="p-step on" id="ps1">
-        <div class="p-icon">🏆</div>
-        <div class="p-title">КОМАНДА АТЫ</div>
-        <div class="p-sub">Командаңыздың атын жазыңыз</div>
-        <input class="p-input" type="text" id="tName" placeholder="Мысалы: Заң сақшылары" maxlength="30">
-        <button class="p-btn" id="toStep2"><i class="fas fa-arrow-right"></i>КЕЛЕСІ</button>
-    </div>
-
-    <!-- Step 2: Members -->
-    <div class="p-step" id="ps2">
-        <div class="p-icon">👥</div>
-        <div class="p-title">МҮШЕЛЕРДІ ҚОСУ</div>
-        <div class="p-sub">Командаңыздың мүшелерін қосыңыз</div>
-        <div class="team-label">
-            <span>Команда</span>
-            <span id="shownTeamName">—</span>
-        </div>
-        <div class="members-list" id="membersList"></div>
-        <input class="p-input" type="text" id="mInput" placeholder="Мүшенің аты" maxlength="40">
-        <button class="p-btn" id="addMemberBtn"><i class="fas fa-user-plus"></i>МҮШЕ ҚОСУ</button>
-        <button class="p-btn sec" id="finishBtn"><i class="fas fa-check-circle"></i>ТІРКЕУДІ АЯҚТАУ</button>
-    </div>
-
-    <!-- Step 3: Success -->
-    <div class="p-step" id="ps3">
-        <div class="success-wrap">
-            <div class="suc-icon">✅</div>
-            <div class="suc-title">ТІРКЕЛДІ!</div>
-            <div class="p-sub">Командаңыз сәтті тіркелді</div>
-            <div class="suc-tname" id="sucName">—</div>
-            <div class="suc-mem" id="sucMem"></div>
-            <div class="suc-wait">
-                <span class="pulse-dot"></span>
-                Жеребьевканы күтіңіз...<br>
-                <small style="color:rgba(255,255,255,.45);margin-top:6px;display:block;">
-                    Барлық командалар тіркелгенде ойын басталады
-                </small>
-            </div>
-            <button class="p-btn" id="anotherBtn" style="margin-top:22px;max-width:380px;">
-                <i class="fas fa-plus"></i>ТАҒЫ БІР КОМАНДА
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Draw animation modal -->
-<div class="draw-modal" id="drawModal">
-    <div class="draw-modal-title">🎲 ЖЕРЕБЬЕВКА</div>
-    <div class="draw-spin-box" id="spinBox">—</div>
-    <div class="draw-sub" id="drawSub">Команда анықталуда...</div>
-    <div class="draw-reveal" id="drawReveal"></div>
-    <button class="draw-ok-btn" id="drawOkBtn" onclick="closeDraw()">
-        <i class="fas fa-check"></i> ЖАЛҒАСТЫРУ
-    </button>
+<!-- Draw modal -->
+<div class="overlay" id="drawOverlay">
+  <div class="draw-modal">
+    <div class="dm-title">🎲 ЖЕРЕБЕ</div>
+    <div class="dm-spinner" id="dmSpinner">—</div>
+    <div class="dm-reveal" id="dmReveal"></div>
+    <div class="dm-sub" id="dmSub">Команда анықталуда...</div>
+    <button class="dm-ok" id="dmOk" onclick="closeDraw()">✓ Жалғастыру</button>
+  </div>
 </div>
 
 <!-- Question modal -->
-<div class="modal" id="qModal">
-    <div class="modal-inner">
-        <div class="m-head">
-            <span id="mCat"><i class="fas fa-gavel"></i> — · <span id="mPts">10</span> БАЛЛ</span>
-            <span class="timer" id="timerEl">30</span>
-        </div>
-        <div class="q-text" id="qText">—</div>
-        <div class="answers" id="answersEl"></div>
-        <div class="m-foot">
-            <div class="help-btns">
-                <button class="help-btn" id="ff50"><i class="fas fa-divide"></i>50/50</button>
-                <button class="help-btn" id="lawBtn"><i class="fas fa-book"></i>ЗАҢ</button>
-            </div>
-            <button class="close-btn" id="closeQBtn"><i class="fas fa-times"></i> ЖАБУ</button>
-        </div>
-        <div class="law-hint" id="lawHint"></div>
+<div class="overlay" id="qOverlay">
+  <div class="q-modal">
+    <div class="qm-head">
+      <div class="qm-cat" id="qmCat">—</div>
+      <div class="timer-box" id="timerBox">30</div>
     </div>
+    <div class="q-body" id="qBody">—</div>
+    <div class="answers-grid" id="answersGrid"></div>
+    <div class="qm-foot">
+      <div class="help-row">
+        <button class="help-btn" id="ff50Btn">✂️ 50/50</button>
+        <button class="help-btn" id="lawBtn">📖 Заң</button>
+      </div>
+      <button class="close-q" id="closeQBtn">✕ Жабу</button>
+    </div>
+    <div class="law-box" id="lawBox"></div>
+  </div>
 </div>
 
-<canvas id="confettiCanvas"></canvas>
-<div id="toasts"></div>
-<div class="sync-dot-wrap" id="syncWrap" style="display:none;">
-    <div class="sync-dot"></div> Синхрондалуда
+<canvas id="confetti"></canvas>
+<div id="toastArea"></div>
+<div class="sync-bar" id="syncBar" style="display:none">
+  <div class="sync-dot"></div> live
 </div>
 
 <script>
-// ════════════════════════════════════════════════════════
-//  WAIT FOR FIREBASE, THEN BOOT
-// ════════════════════════════════════════════════════════
-function boot() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const isPhone   = urlParams.get('join') === 'true';
+// ════════════════════════════════════════════
+//  WAIT FOR FIREBASE
+// ════════════════════════════════════════════
+if(window._db) boot(); else window.addEventListener('fb-ready', boot);
 
-    if (isPhone) {
-        document.getElementById('mainScreen').style.display  = 'none';
-        document.getElementById('phoneScreen').classList.add('on');
-        runPhone();
-    } else {
-        document.getElementById('syncWrap').style.display = 'flex';
-        checkFirebaseConfig();
-        runMain();
-    }
+function boot(){
+  const isPhone = new URLSearchParams(location.search).get('join') === 'true';
+  if(isPhone){
+    document.getElementById('mainScreen').style.display = 'none';
+    document.getElementById('phoneScreen').classList.add('on');
+    initPhone();
+  } else {
+    document.getElementById('syncBar').style.display = 'flex';
+    initMain();
+  }
 }
 
-if (window._fbReady) {
-    boot();
-} else {
-    window.addEventListener('firebase-ready', boot);
-}
+// ════════════════════════════════════════════
+//  QUESTIONS DATABASE
+// ════════════════════════════════════════════
+const CATS = [
+  {
+    id:'bilim', emoji:'🎓', name:'Білім', color:'cat-1',
+    subs:[
+      {
+        id:'info', emoji:'💻', name:'Информатика',
+        qs:[
+          {pts:10, q:'Компьютерде 1 байт неше битке тең?', opts:['А) 4 бит','Б) 8 бит','В) 16 бит','Г) 32 бит'], ok:1, law:'Информатика негіздері: 1 байт = 8 бит.'},
+          {pts:20, q:'HTML-де сілтеме жасау үшін қандай тег қолданылады?', opts:['А) <link>','Б) <src>','В) <a>','Г) <href>'], ok:2, law:'HTML негіздері: <a href="..."> — гиперсілтеме тегі.'},
+          {pts:30, q:'Интернет желісін бірінші дамытқан жоба қалай аталады?', opts:['А) INTERNET','Б) ARPANET','В) USENET','Г) BITNET'], ok:1, law:'1969 жылы АҚШ Қорғаныс министрлігі ARPANET жобасын іске қосты.'},
+          {pts:40, q:'Python тілінде тізімнің соңғы элементін алу үшін қандай индекс қолданылады?', opts:['А) 0','Б) -1','В) last','Г) end'], ok:1, law:'Python-да теріс индекстер соңынан санайды: -1 — соңғы элемент.'},
+        ]
+      },
+      {
+        id:'bio', emoji:'🧬', name:'Биология',
+        qs:[
+          {pts:10, q:'Фотосинтез процесі қай органда өтеді?', opts:['А) Тамыр','Б) Жапырақ','В) Сабақ','Г) Гүл'], ok:1, law:'Фотосинтез — жасыл өсімдіктердің жапырақтарындағы хлоропласттарда жүреді.'},
+          {pts:20, q:'Адам ағзасындағы ең ірі мүше қайсы?', opts:['А) Бауыр','Б) Өкпе','В) Тері','Г) Жүрек'], ok:2, law:'Тері — адам ағзасының ең ірі мүшесі, дене салмағының ~15%-ын құрайды.'},
+          {pts:30, q:'ДНҚ-ның толық атауы қандай?', opts:['А) Динуклеин қышқылы','Б) Дезоксирибонуклеин қышқылы','В) Диаминонуклеин қышқылы','Г) Дирибонуклеин қышқылы'], ok:1, law:'ДНҚ — Дезоксирибонуклеин қышқылы, тұқым қуалаушылық ақпаратын сақтайды.'},
+          {pts:40, q:'Адамда қанша хромосома бар (диплоидты жиын)?', opts:['А) 23','Б) 44','В) 46','Г) 48'], ok:2, law:'Адамда 46 хромосома (23 жұп) бар: 22 жұп аутосома + 1 жұп жыныс хромосомасы.'},
+        ]
+      },
+      {
+        id:'geo', emoji:'🌍', name:'География',
+        qs:[
+          {pts:10, q:'Дүниежүзіндегі ең ұзын өзен қайсы?', opts:['А) Амазонка','Б) Нил','В) Янцзы','Г) Миссисипи'], ok:1, law:'Нил өзені — 6650 км-мен дүниежүзіндегі ең ұзын өзен.'},
+          {pts:20, q:'Қазақстанның ең биік нүктесі қайсы?', opts:['А) Белуха тауы','Б) Хан Тәңірі шыңы','В) Талғар шыңы','Г) Мұзтау'], ok:1, law:'Хан Тәңірі — 6995 м, Қазақстанның ең биік нүктесі.'},
+          {pts:30, q:'Дүниежүзіндегі ең терең көл қайсы?', opts:['А) Каспий теңізі','Б) Байкал','В) Арал','Г) Балқаш'], ok:1, law:'Байкал — 1642 м тереңдікпен дүниежүзіндегі ең терең тұщы су көлі.'},
+          {pts:40, q:'Ең ірі материк қайсы?', opts:['А) Африка','Б) Солтүстік Америка','В) Еуразия','Г) Антарктида'], ok:2, law:'Еуразия — 53,9 млн шаршы километрмен ең ірі материк.'},
+        ]
+      },
+    ]
+  },
+  {
+    id:'zan', emoji:'⚖️', name:'Заң және тәртіп', color:'cat-2',
+    subs:[
+      {
+        id:'otbasy', emoji:'👪', name:'Отбасы',
+        qs:[
+          {pts:10, q:'Неке қию үшін ең төменгі жас қандай?', opts:['А) 16 жас','Б) 17 жас','В) 18 жас','Г) 21 жас'], ok:2, law:'"Неке және отбасы" кодексі 10-бап: Неке жасы — 18.'},
+          {pts:20, q:'Ата-анасы ажырасқан кезде баланың тұрғылықты жерін кім анықтайды?', opts:['А) Тек ана','Б) Тек әке','В) Сот баланың мүддесін ескере отырып','Г) Бала өзі таңдайды'], ok:2, law:'Неке кодексі 75-бап: Сот баланың мүддесін ескереді.'},
+          {pts:30, q:'Алимент төлеуден жалтарған адамға қандай жауапкершілік қарастырылған?', opts:['А) Тек айыппұл','Б) Ескерту','В) Қылмыстық жауапкершілік','Г) Ешқандай жауапкершілік жоқ'], ok:2, law:'ҚК 139-бап: Алимент төлеуден жалтару — қылмыстық жауапкершілік.'},
+          {pts:40, q:'Қазақстан заңдарына сәйкес бала асырап алу кімге рұқсат етілген?', opts:['А) Тек туысқан жұптарға','Б) Тек ерлі-зайыптыларға','В) Жасы 18-ден асқан, сотпен танылмаған адамдарға','Г) Тек мемлекеттік қызметкерлерге'], ok:2, law:'"Неке және отбасы" кодексі 79-бап: Асырап алушыларға қойылатын талаптар.'},
+        ]
+      },
+      {
+        id:'qogam', emoji:'🏛', name:'Қоғам',
+        qs:[
+          {pts:10, q:'ҚР Конституциясы қашан қабылданды?', opts:['А) 1991 жылы','Б) 1993 жылы','В) 1995 жылы','Г) 2000 жылы'], ok:2, law:'ҚР Конституциясы 1995 жылы 30 тамызда референдумда қабылданды.'},
+          {pts:20, q:'Сайлауға қатысу құқығы қанша жастан басталады?', opts:['А) 16 жас','Б) 18 жас','В) 21 жас','Г) 25 жас'], ok:1, law:'Конституция 33-бап: 18 жастан бастап белсенді сайлау құқығы.'},
+          {pts:30, q:'Полиция азаматтың жеке басын куәландыратын құжатын тексеру үшін не қажет?', opts:['А) Кез келген уақытта тексере алады','Б) Жазбаша рұқсат','В) Негізді күдік болуы керек','Г) Прокуратура санкциясы'], ok:2, law:'Әкімшілік кодекс 27.1-бап: Тексеру үшін негізді күдік болуы тиіс.'},
+          {pts:40, q:'Омбудсменді (Адам құқықтары жөніндегі уәкілді) кім тағайындайды?', opts:['А) Парламент Сенаты','Б) Парламент Мәжілісі','В) Президент','Г) Конституциялық Сот'], ok:2, law:'"Адам құқықтары жөніндегі уәкіл туралы" Заң 10-бап: Президент тағайындайды.'},
+        ]
+      },
+      {
+        id:'hukuk', emoji:'📜', name:'Азаматтық құқық',
+        qs:[
+          {pts:10, q:'Кәмелетке толмаған адам ресми жұмысқа орналаса ала ма?', opts:['А) Жоқ, мүлдем жұмыс жасай алмайды','Б) 14 жастан бастап ата-анасының рұқсатымен','В) 16 жастан бастап', 'Г) 18 жастан бастап ғана'], ok:1, law:'ҚР Еңбек кодексі 30-бап: 14 жастан ата-аналар келісімімен.'},
+          {pts:20, q:'Ақша қарызын кімге өндіріп алуға болады?', opts:['А) Борышкердің кез келген туысқанынан','Б) Тек борышкердің өзінен','В) Кепілгерден де болады','Г) Ешкімнен өндіріп алуға болмайды'], ok:2, law:'ҚР АК 329-бап: Кепілгер борышкермен бірге жауаптылықта болады.'},
+          {pts:30, q:'Мүліктік дауларда талап қою мерзімі неше жыл?', opts:['А) 1 жыл','Б) 2 жыл','В) 3 жыл','Г) 5 жыл'], ok:2, law:'ҚР АК 177-бап: Жалпы талап қою мерзімі — 3 жыл.'},
+          {pts:40, q:'Тұтынушы сатып алынған тауардан бас тарта алатын мерзім қанша күн?', opts:['А) 3 күн','Б) 7 күн','В) 14 күн','Г) 30 күн'], ok:2, law:'"Тұтынушылардың құқықтарын қорғау туралы" Заң 29-бап: 14 күн ішінде.'},
+        ]
+      },
+    ]
+  },
+  {
+    id:'oylan', emoji:'🧠', name:'Ойлан-тап', color:'cat-3',
+    subs:[
+      {
+        id:'jumbaq', emoji:'🔮', name:'Жұмбақтар',
+        qs:[
+          {pts:10, q:'Суға салсаң батпайды, отқа салсаң жанбайды, жерге салсаң шіримейді — бұл не?', opts:['А) Алтын','Б) Мұз','В) Тас','Г) Темір'], ok:0, law:'Жауап: Алтын — суда батпайтын, отта жанбайтын (ерісе де) асыл металл.'},
+          {pts:20, q:'Таңертең төрт аяқты, түсте екі аяқты, кешке үш аяқты — бұл не?', opts:['А) Жылқы','Б) Адам','В) Ит','Г) Тасбақа'], ok:1, law:'Классикалық жұмбақ: Адам — бала кезінде төрт аяқты, ересек екі аяқты, кәрілікте таяқпен үш аяқты.'},
+          {pts:30, q:'Мен бар болғанда сен жоқсың, сен бар болғанда мен жоқпын — бұл не?', opts:['А) Арман','Б) Көлеңке','В) Дыбыс','Г) Жарық'], ok:1, law:'Жауап: Көлеңке — жарық болғанда пайда болады, өзі болғанда жарық жоқ.'},
+          {pts:40, q:'Айтсаң да болады, айтпасаң да болады, бірақ ешкім айтпайды — бұл не?', opts:['А) Сыр','Б) Ауа','В) Ой','Г) Атың'], ok:3, law:'Жауап: Аты — адам өз атын өзіне айтпайды, бірақ өзгелер айтады.'},
+        ]
+      },
+      {
+        id:'logika', emoji:'🔢', name:'Логика',
+        qs:[
+          {pts:10, q:'5 + 3 × 2 = ?', opts:['А) 16','Б) 11','В) 10','Г) 13'], ok:1, law:'Математика ережесі: алдымен көбейту: 3×2=6, содан соң 5+6=11.'},
+          {pts:20, q:'Егер барлық мысықтар жануар болса, кейбір жануарлар ақ болса, онда...', opts:['А) Барлық мысықтар ақ','Б) Кейбір мысықтар ақ болуы мүмкін','В) Ешбір мысық ақ емес','Г) Барлық ақтар мысық'], ok:1, law:'Логика: мүмкіндік пен міндеттілікті ажырату керек.'},
+          {pts:30, q:'"Мен өтірік айтамын" деген адам рас айтып жатыр ма?', opts:['А) Рас айтады','Б) Өтірік айтады','В) Логикалық қайшылық','Г) Жауабы жоқ'], ok:2, law:'Эпименид парадоксы — бұл өзіне-өзі қайшы келетін логикалық парадокс.'},
+          {pts:40, q:'100-ге дейін барлық тақ сандардың қосындысы қанша?', opts:['А) 2500','Б) 2550','В) 5000','Г) 2499'], ok:0, law:'1-ден 99-ға дейін 50 тақ сан бар. Формула: 50² = 2500.'},
+        ]
+      },
+      {
+        id:'tapqyr', emoji:'💡', name:'Тапқырлық',
+        qs:[
+          {pts:10, q:'Желдеткіш бір минутта 600 айналым жасаса, 10 секундта неше айналым жасайды?', opts:['А) 60','Б) 100','В) 10','Г) 50'], ok:1, law:'600 ÷ 60 × 10 = 100 айналым.'},
+          {pts:20, q:'Қайсы сан квадраттаса да, кубқа да шықса да нөл болады?', opts:['А) 1','Б) -1','В) 0','Г) 10'], ok:2, law:'0² = 0, 0³ = 0 — нөлдің кез келген дәрежесі нөл.'},
+          {pts:30, q:'Кесте үстінде 3 алма бар, 1-ін алдық. Неше қалды?', opts:['А) 2','Б) 3','В) 1','Г) 0'], ok:0, law:'Тапқырлық: 3 алманың 1-ін алдық дегеніміз 1 бізде, 2 кестеде қалды — жауап 2.'},
+          {pts:40, q:'Маман 5 машинаны 5 минутта жөндесе, 100 машинаны қанша уақытта жөндейді?', opts:['А) 100 минут','Б) 500 минут','В) 5 минут','Г) 20 минут'], ok:0, law:'Тапқырлық: 1 маман 1 машинаны 5 минутта жөндейді. Параллель жұмыс емес — 100 машина = 100 × 5 = 500 минут… Бірақ 1 маман болса: 100 минут дұрыс жауап — 100 машина × 1 минут/маш.'},
+        ]
+      },
+    ]
+  },
+  {
+    id:'qazaq', emoji:'🇰🇿', name:'Қазақстан', color:'cat-4',
+    subs:[
+      {
+        id:'tarix', emoji:'📖', name:'Тарих',
+        qs:[
+          {pts:10, q:'Қазақстан тәуелсіздігін қашан жариялады?', opts:['А) 1990 жылы','Б) 1991 жылы 16 желтоқсан','В) 1992 жылы','Г) 1995 жылы'], ok:1, law:'1991 жылы 16 желтоқсанда ҚР тәуелсіздігі жарияланды — Тәуелсіздік күні.'},
+          {pts:20, q:'Қазақ хандығы қай жылы құрылды?', opts:['А) 1456 жылы','Б) 1465 жылы','В) 1480 жылы','Г) 1500 жылы'], ok:1, law:'Қазақ хандығы 1465 жылы Керей мен Жәнібек хандар тұсында құрылды.'},
+          {pts:30, q:'Қазақстанның алғашқы астанасы қай қала болды?', opts:['А) Алматы','Б) Семей','В) Орынбор','Г) Ташкент'], ok:0, law:'Кеңес дәуірінде және тәуелсіздік алғаннан кейін 1997 жылға дейін Алматы астана болды.'},
+          {pts:40, q:'Абылай хан қай жылдары билік жүргізді?', opts:['А) 1711–1781','Б) 1693–1748','В) 1731–1781','Г) 1748–1780'], ok:0, law:'Абылай хан 1711 жылы туылып, 1781 жылы қайтыс болды; хан болған жылы — 1771.'},
+        ]
+      },
+      {
+        id:'madeni', emoji:'🎨', name:'Мәдениет',
+        qs:[
+          {pts:10, q:'Абай Құнанбаевтың "Қара сөздері" неше сөзден тұрады?', opts:['А) 25','Б) 37','В) 45','Г) 50'], ok:1, law:'Абайдың "Қара сөздері" — 37 қара сөзден тұратын философиялық шығарма.'},
+          {pts:20, q:'"Манас" эпосы қай халықтың ауыз әдебиеті ескерткіші?', opts:['А) Қазақ','Б) Қырғыз','В) Өзбек','Г) Ұйғыр'], ok:1, law:'"Манас" — қырғыз халқының эпосы, дүниежүзіндегі ең ұзын эпостардың бірі.'},
+          {pts:30, q:'Қазақтың ұлттық аспабы домбыраның неше ішегі бар?', opts:['А) 1 ішек','Б) 2 ішек','В) 3 ішек','Г) 4 ішек'], ok:1, law:'Домбыра — дәстүрлі 2 ішекті қазақ аспабы.'},
+          {pts:40, q:'Қазақстандық алғашқы ғарышкер кім?', opts:['А) Айдын Аимбетов','Б) Тоқтар Әубәкіров','В) Ахтам Шаріпов','Г) Мұхтар Мұсабаев'], ok:1, law:'Тоқтар Әубәкіров 1991 жылы "Союз ТМ-13" кемесімен ғарышқа ұшты — тәуелсіз Қазақстаннан тұңғыш ғарышкер.'},
+        ]
+      },
+      {
+        id:'tabigat', emoji:'🌿', name:'Табиғат',
+        qs:[
+          {pts:10, q:'Қазақстанның ең үлкен көлі қайсы?', opts:['А) Балқаш','Б) Арал','В) Зайсан','Г) Алакөл'], ok:0, law:'Балқаш — 18 300 шаршы километрмен Қазақстанның ең үлкен көлі.'},
+          {pts:20, q:'Қазақстанда неше табиғи климаттық белдеу бар?', opts:['А) 3','Б) 4','В) 5','Г) 6'], ok:2, law:'Қазақстанда 5 климаттық белдеу бар: орман-дала, дала, шөл, шөлейт, тау.'},
+          {pts:30, q:'Арал теңізінің тартылуының басты себебі не?', opts:['А) Климаттың жылынуы','Б) Су алу үшін өзендердің бұрылуы','В) Жер сілкінісі','Г) Теңіз суының буланып кетуі'], ok:1, law:'Амударья мен Сырдарядан суармалы егіндік үшін су алу нәтижесінде Арал тартылды.'},
+          {pts:40, q:'Қазақстандағы ең сирек кездесетін жануар — қандай?', opts:['А) Қасқыр','Б) Барыс','В) Арқар','Г) Сайғақ'], ok:1, law:'Барыс (ілбіс) — ҚР Қызыл кітабына енген, саны өте аз сирек жануар.'},
+        ]
+      },
+    ]
+  },
+];
 
-// ════════════════════════════════════════════════════════
-//  CHECK FIREBASE
-// ════════════════════════════════════════════════════════
-function checkFirebaseConfig() {
-    // If databaseURL still has placeholder, show setup banner
-    const banner = document.getElementById('setupBanner');
-    try {
-        const db = window._fbDB;
-        // Try a quick read — if config is wrong it will error
-        window._fbGet(window._fbRef(db, '.info/connected')).then(() => {
-            banner.style.display = 'none';
-        }).catch(() => {
-            banner.style.display = 'block';
-        });
-    } catch(e) {
-        banner.style.display = 'block';
-    }
-}
+// Flat question lookup
+const ALL_QUESTIONS = [];
+CATS.forEach(cat => cat.subs.forEach(sub => sub.qs.forEach(q => {
+  ALL_QUESTIONS.push({...q, catId:cat.id, subId:sub.id, catName:cat.name, subName:sub.name, catEmoji:cat.emoji, subEmoji:sub.emoji});
+})));
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 //  HELPERS
-// ════════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const $ = id => document.getElementById(id);
 
-function toast(msg) {
-    const c = document.getElementById('toasts');
-    const d = document.createElement('div');
-    d.className = 'toast'; d.textContent = msg;
-    c.appendChild(d);
-    setTimeout(() => d.remove(), 2600);
+function toast(msg){
+  const c = $('toastArea');
+  const d = document.createElement('div');
+  d.className='toast'; d.textContent=msg;
+  c.appendChild(d);
+  setTimeout(()=>d.remove(),2600);
 }
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 //  PHONE
-// ════════════════════════════════════════════════════════
-function runPhone() {
-    const db = window._fbDB;
-    let teamName = '', members = [];
+// ════════════════════════════════════════════
+function initPhone(){
+  const db = window._db;
+  let teamName='', members=[];
 
-    const inp  = document.getElementById('tName');
-    const mInp = document.getElementById('mInput');
-    const mList = document.getElementById('membersList');
+  const tInp = $('tNameInp');
+  const mInp = $('memInp');
+  const mList = $('memsList');
 
-    // Step 1 → 2
-    document.getElementById('toStep2').onclick = () => {
-        const v = inp.value.trim();
-        if (!v) { pAlert('Команда атын жазыңыз!'); return; }
-        teamName = v;
-        document.getElementById('shownTeamName').textContent = teamName;
-        goStep(2);
-    };
-    inp.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('toStep2').click(); });
+  $('toStep2Btn').onclick = ()=>{
+    const v = tInp.value.trim();
+    if(!v){pAlert('Команда атын жазыңыз!');return;}
+    teamName = v;
+    $('shownName').textContent = teamName;
+    goPS(2);
+  };
+  tInp.onkeydown = e=>{ if(e.key==='Enter') $('toStep2Btn').click(); };
 
-    // Add member
-    document.getElementById('addMemberBtn').onclick = () => {
-        const v = mInp.value.trim();
-        if (!v) { pAlert('Мүшенің атын жазыңыз!'); return; }
-        if (members.includes(v)) { pAlert('Бұл мүше бар!'); return; }
-        members.push(v);
-        mInp.value = '';
-        renderMems();
-        mInp.focus();
-    };
-    mInp.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('addMemberBtn').click(); });
+  $('addMemBtn').onclick = ()=>{
+    const v = mInp.value.trim();
+    if(!v){pAlert('Мүшенің атын жазыңыз!');return;}
+    if(members.includes(v)){pAlert('Бұл мүше бар!');return;}
+    members.push(v); mInp.value='';
+    renderMems(); mInp.focus();
+  };
+  mInp.onkeydown = e=>{ if(e.key==='Enter') $('addMemBtn').click(); };
 
-    // Finish
-    document.getElementById('finishBtn').onclick = () => {
-        if (members.length === 0) { pAlert('Кем дегенде 1 мүше!'); return; }
-        submitTeam();
-    };
+  $('finishRegBtn').onclick = ()=>{
+    if(!members.length){pAlert('Кем дегенде 1 мүше қосыңыз!');return;}
+    submitTeam();
+  };
 
-    // Another team
-    document.getElementById('anotherBtn').onclick = () => {
-        teamName = ''; members = [];
-        inp.value = ''; mInp.value = '';
-        renderMems();
-        goStep(1);
-    };
+  $('anotherTeamBtn').onclick = ()=>{
+    teamName=''; members=[];
+    tInp.value=''; mInp.value='';
+    renderMems(); goPS(1);
+  };
 
-    function renderMems() {
-        mList.innerHTML = members.map((m,i) => `
-            <div class="m-item">
-                <span><i class="fas fa-user"></i>${esc(m)}</span>
-                <div class="rm-btn" onclick="rmMem(${i})"><i class="fas fa-times"></i></div>
-            </div>
-        `).join('');
-    }
-    window.rmMem = i => { members.splice(i,1); renderMems(); };
+  function renderMems(){
+    mList.innerHTML = members.map((m,i)=>`
+      <div class="mem-item">
+        <div class="mem-left"><span class="mem-icon">👤</span>${esc(m)}</div>
+        <div class="rm-mem" onclick="rmM(${i})">✕</div>
+      </div>
+    `).join('');
+  }
+  window.rmM = i=>{ members.splice(i,1); renderMems(); };
 
-    async function submitTeam() {
-        const team = {
-            id: Date.now()+'_'+Math.random().toString(36).slice(2,7),
-            name: teamName,
-            members: [...members],
-            ts: Date.now()
-        };
-        try {
-            const teamsRef = window._fbRef(db, 'teams/' + team.id);
-            await window._fbSet(teamsRef, team);
-            document.getElementById('sucName').textContent = teamName;
-            document.getElementById('sucMem').textContent  = members.length + ' мүше: ' + members.join(', ');
-            goStep(3);
-        } catch(e) {
-            pAlert('Қате! Firebase дұрыс баптандырылмаған.');
-        }
-    }
-
-    function goStep(n) {
-        ['ps1','ps2','ps3'].forEach(id => document.getElementById(id).classList.remove('on'));
-        document.getElementById('ps'+n).classList.add('on');
-        const dots = [['sd1','sl1'],['sd2','sl2'],['sd3','sl2']];
-        document.getElementById('sd1').className = 's-dot' + (n>1?' done':'') + (n===1?' cur':'');
-        document.getElementById('sd2').className = 's-dot' + (n>2?' done':'') + (n===2?' cur':'');
-        document.getElementById('sd3').className = 's-dot' + (n===3?' done':'');
-        document.getElementById('sl1').className = 's-line' + (n>1?' done':'');
-        document.getElementById('sl2').className = 's-line' + (n>2?' done':'');
-        if (n===1) { document.getElementById('sd1').textContent='1'; document.getElementById('sd1').classList.add('cur'); }
-        if (n===2) {
-            document.getElementById('sd1').innerHTML='<i class="fas fa-check" style="font-size:.75rem;"></i>';
-            document.getElementById('sd2').textContent='2'; document.getElementById('sd2').classList.add('cur');
-        }
-        if (n===3) {
-            document.getElementById('sd2').innerHTML='<i class="fas fa-check" style="font-size:.75rem;"></i>';
-            document.getElementById('sd3').classList.add('done');
-        }
-    }
-
-    function pAlert(msg) {
-        const d = document.createElement('div');
-        d.style.cssText='position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#c0392b;color:#fff;padding:13px 28px;border-radius:14px;font-weight:700;z-index:9999;border:2px solid var(--gold);font-size:1.05rem;';
-        d.textContent = msg;
-        document.body.appendChild(d);
-        setTimeout(() => d.remove(), 2000);
-    }
-}
-
-// ════════════════════════════════════════════════════════
-//  MAIN SCREEN
-// ════════════════════════════════════════════════════════
-function runMain() {
-    const db = window._fbDB;
-    const SITE = location.origin + location.pathname;
-
-    // Generate QR
+  async function submitTeam(){
+    const team = { id:Date.now()+'_'+Math.random().toString(36).slice(2,6), name:teamName, members:[...members], ts:Date.now() };
     try {
-        new QRCode(document.getElementById('qrcode'), {
-            text: SITE + '?join=true', width:155, height:155
-        });
-    } catch(e) {}
+      await window._set(window._ref(db,'teams/'+team.id), team);
+      $('sucName').textContent = teamName;
+      $('sucMem').textContent  = members.length+' мүше: '+members.join(', ');
+      goPS(3);
+    } catch(e){ pAlert('Қате! Firebase жұмыс жасамады.'); }
+  }
 
-    let teams = {};
-    let drawWinnerIdx = 0;
-    let drawDone = false;
-
-    // Elements
-    const teamsCards   = document.getElementById('teamsCards');
-    const noTeamsMsg   = document.getElementById('noTeamsMsg');
-    const countBadge   = document.getElementById('countBadge');
-    const mainCount    = document.getElementById('mainCount');
-    const drawBtn      = document.getElementById('drawBtn');
-    const startBtn     = document.getElementById('startBtn');
-    const clearBtn     = document.getElementById('clearBtn');
-    const drawResultBox= document.getElementById('drawResultBox');
-    const drawWinnerName = document.getElementById('drawWinnerName');
-
-    // ─── REALTIME LISTENER ────────────────────────────────────
-    const teamsRef = window._fbRef(db, 'teams');
-    window._fbOnVal(teamsRef, snap => {
-        teams = snap.val() || {};
-        renderTeams();
-    });
-
-    function getTeamList() {
-        return Object.values(teams).sort((a,b) => a.ts - b.ts);
-    }
-
-    function renderTeams() {
-        const list = getTeamList();
-        const n    = list.length;
-
-        countBadge.textContent = n;
-        mainCount.textContent  = n + ' ТОП';
-        drawBtn.disabled = n < 2;
-
-        if (n === 0) {
-            teamsCards.innerHTML = '';
-            teamsCards.appendChild(noTeamsMsg);
-            noTeamsMsg.style.display = '';
-            return;
-        }
-        noTeamsMsg.style.display = 'none';
-
-        teamsCards.innerHTML = list.map((t,i) => `
-            <div class="team-card">
-                <div class="tc-name">
-                    <span class="tc-num">${i+1}</span>
-                    ${esc(t.name)}
-                </div>
-                ${t.members.map(m => `
-                    <div class="tc-member"><i class="fas fa-user"></i>${esc(m)}</div>
-                `).join('')}
-            </div>
-        `).join('');
-    }
-
-    // ─── DRAW ────────────────────────────────────────────────
-    drawBtn.onclick = () => {
-        const list = getTeamList();
-        if (list.length < 2) return;
-        runDraw(list);
+  function goPS(n){
+    ['ps1','ps2','ps3'].forEach(id=>$(id).classList.remove('on'));
+    $('ps'+n).classList.add('on');
+    // Step dots
+    const configs = {
+      1:[['cur','',''],['','',''],['done','done','']],
+      2:[['done','',''],['cur','done',''],['done','done','']],
+      3:[['done','',''],['done','done',''],['done','done','done']],
     };
+    const c = configs[n];
+    $('sd1').className = 'sd '+c[0][0]; if(!c[0][0]) $('sd1').className='sd'; if(c[0][0]==='done') $('sd1').innerHTML='✓'; else if(c[0][0]==='cur') $('sd1').textContent='1';
+    $('sd2').className = 'sd '+c[1][0]; if(!c[1][0]) $('sd2').className='sd'; if(c[1][0]==='done') $('sd2').innerHTML='✓'; else if(c[1][0]==='cur') $('sd2').textContent='2';
+    $('sl1').className = 'sl '+(c[1][1]?c[1][1]:'');
+    $('sl2').className = 'sl '+(c[2][2]?c[2][2]:'');
+    $('sd3').className = 'sd '+(n===3?'done':'');
+  }
 
-    function runDraw(list) {
-        const modal   = document.getElementById('drawModal');
-        const spinBox = document.getElementById('spinBox');
-        const drawSub = document.getElementById('drawSub');
-        const reveal  = document.getElementById('drawReveal');
-        const okBtn   = document.getElementById('drawOkBtn');
-
-        modal.classList.add('on');
-        spinBox.style.display  = 'block';
-        reveal.style.display   = 'none';
-        okBtn.style.display    = 'none';
-        drawSub.textContent    = 'Команда анықталуда...';
-
-        let count = 0;
-        const total = 18 + Math.floor(Math.random()*12);
-        let delay   = 70;
-
-        function spin() {
-            const rnd = list[Math.floor(Math.random()*list.length)].name;
-            spinBox.textContent = rnd;
-            count++;
-            if (count < total) {
-                delay = Math.min(delay + 13, 400);
-                setTimeout(spin, delay);
-            } else {
-                drawWinnerIdx = Math.floor(Math.random()*list.length);
-                const winner  = list[drawWinnerIdx].name;
-                spinBox.style.display = 'none';
-                drawSub.textContent   = '🎉 БІРІНШІ ОЙНАЙТЫН КОМАНДА:';
-                reveal.textContent    = '🏆 ' + winner;
-                reveal.style.display  = 'block';
-                okBtn.style.display   = 'inline-block';
-                drawDone = true;
-                // Show on main screen
-                drawResultBox.classList.add('show');
-                drawWinnerName.textContent = '🏆 Бірінші: ' + winner;
-                startBtn.style.display = 'inline-flex';
-                // Confetti!
-                launchConfetti();
-            }
-        }
-        spin();
-    }
-
-    window.closeDraw = function() {
-        document.getElementById('drawModal').classList.remove('on');
-    };
-
-    // ─── START GAME ──────────────────────────────────────────
-    startBtn.onclick = () => {
-        const list = getTeamList();
-        if (!list.length) { toast('Командалар жоқ!'); return; }
-        document.getElementById('regSection').style.display = 'none';
-        document.getElementById('setupBanner').style.display = 'none';
-        const gameBox = document.getElementById('gameBox');
-        gameBox.style.display = 'block';
-        // Reorder: winner first
-        const ordered = [...list.slice(drawWinnerIdx), ...list.slice(0, drawWinnerIdx)];
-        runGame(ordered);
-    };
-
-    // ─── CLEAR ──────────────────────────────────────────────
-    clearBtn.onclick = async () => {
-        if (!confirm('Барлық командаларды өшіресіз бе?')) return;
-        await window._fbRemove(window._fbRef(db, 'teams'));
-        drawResultBox.classList.remove('show');
-        drawDone = false;
-        startBtn.style.display = 'none';
-    };
-
-    document.getElementById('refreshBtn').onclick = () => {
-        // Listener already handles it; just give feedback
-        toast('Жаңартылды ✓');
-    };
+  function pAlert(msg){
+    const d=document.createElement('div');
+    d.style.cssText='position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1e293b;border:1.5px solid rgba(245,200,66,.4);color:#fff;padding:12px 26px;border-radius:50px;font-weight:700;z-index:9999;font-size:.95rem;';
+    d.textContent=msg; document.body.appendChild(d);
+    setTimeout(()=>d.remove(),2000);
+  }
 }
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════════════════════
+//  MAIN
+// ════════════════════════════════════════════
+function initMain(){
+  const db = window._db;
+  const SITE = location.origin + location.pathname;
+
+  // QR
+  try{ new QRCode($('qrcode'),{text:SITE+'?join=true',width:150,height:150}); }catch(e){}
+
+  let teams={}, drawIdx=0, drawDone=false;
+
+  // Realtime listener
+  window._onVal(window._ref(db,'teams'), snap=>{
+    teams = snap.val()||{};
+    renderTeams();
+  });
+
+  function teamList(){ return Object.values(teams).sort((a,b)=>a.ts-b.ts); }
+
+  function renderTeams(){
+    const list = teamList();
+    const n = list.length;
+    $('countPill').textContent = n;
+    $('mainCount').textContent = n+' команда';
+    $('drawBtn').disabled = n<2;
+
+    const grid = $('teamsGrid');
+    if(!n){
+      grid.innerHTML='';
+      grid.appendChild($('noTeamsMsg'));
+      $('noTeamsMsg').style.display='';
+      return;
+    }
+    $('noTeamsMsg').style.display='none';
+    grid.innerHTML = list.map((t,i)=>`
+      <div class="team-card">
+        <div class="tc-num-name">
+          <span class="tc-num">${i+1}</span>
+          <span class="tc-name">${esc(t.name)}</span>
+        </div>
+        ${t.members.map(m=>`<div class="tc-member"><span class="tc-icon">👤</span>${esc(m)}</div>`).join('')}
+      </div>
+    `).join('');
+  }
+
+  // Draw
+  $('drawBtn').onclick = ()=>{ const list=teamList(); if(list.length<2)return; runDraw(list); };
+
+  function runDraw(list){
+    const ov = $('drawOverlay');
+    const spin = $('dmSpinner');
+    const rev  = $('dmReveal');
+    const sub  = $('dmSub');
+    const ok   = $('dmOk');
+    ov.classList.add('on');
+    spin.style.display='inline-block'; rev.style.display='none'; ok.style.display='none';
+    sub.textContent='Команда анықталуда...';
+
+    let cnt=0, total=18+Math.floor(Math.random()*12), delay=65;
+    function spin_(){
+      spin.textContent = list[Math.floor(Math.random()*list.length)].name;
+      cnt++; if(cnt<total){ delay=Math.min(delay+14,380); setTimeout(spin_,delay); }
+      else {
+        drawIdx = Math.floor(Math.random()*list.length);
+        const winner = list[drawIdx].name;
+        spin.style.display='none';
+        sub.textContent='🎉 Бірінші ойнайтын команда:';
+        rev.textContent='🏆 '+winner; rev.style.display='block';
+        ok.style.display='inline-block'; drawDone=true;
+        $('drawResult').classList.add('show');
+        $('drWinner').textContent='🏆 Бірінші: '+winner;
+        $('startBtn').style.display='inline-flex';
+        launchConfetti();
+      }
+    }
+    spin_();
+  }
+
+  window.closeDraw = ()=>$('drawOverlay').classList.remove('on');
+
+  // Start game
+  $('startBtn').onclick = ()=>{
+    const list=teamList(); if(!list.length){toast('Командалар жоқ!');return;}
+    $('regPanel').style.display='none';
+    const gw=$('gameWrap'); gw.style.display='flex';
+    const ordered=[...list.slice(drawIdx),...list.slice(0,drawIdx)];
+    runGame(ordered);
+  };
+
+  // Clear
+  $('clearBtn').onclick = async()=>{
+    if(!confirm('Барлық командаларды өшіресіз бе?'))return;
+    await window._remove(window._ref(db,'teams'));
+    $('drawResult').classList.remove('show');
+    $('startBtn').style.display='none';
+  };
+}
+
+// ════════════════════════════════════════════
 //  GAME ENGINE
-// ════════════════════════════════════════════════════════
-function runGame(teamList) {
-    const questions = [
-        {cat:0,pts:10,catName:'📚 БІЛІМ',
-         q:'Қазақстанда орта білім алу тегін бе?',
-         opts:['А) Иә, мемлекеттік мектептерде тегін','Б) Жоқ, барлық мектептер ақылы','В) Тек бастауыш сыныптар тегін','Г) Тек дарынды балаларға тегін'],
-         ok:0,law:'ҚР Конституциясы 30-бап: "Орта білім алу тегін".'},
-        {cat:0,pts:20,catName:'📚 БІЛІМ',
-         q:'Мұғалім оқушыны сабақтан шығарып жіберсе, оқушының қайта сабаққа кіруге құқығы бар ма?',
-         opts:['А) Иә, білім алу құқығы бұзылмауы керек','Б) Жоқ, тәртіп бұзса кіргізбеуге болады','В) Тек ата-анасы келгенде ғана','Г) Тек директор рұқсатымен'],
-         ok:0,law:'"Білім туралы" Заң 8-бап: Оқушыны сабақтан шығаруға тыйым.'},
-        {cat:0,pts:30,catName:'📚 БІЛІМ',
-         q:'Мектеп директоры мұғалімді аттестациядан өтпегені үшін жұмыстан шығара ала ма?',
-         opts:['А) Иә, аттестация міндетті','Б) Жоқ, тек мұғалімнің өз келісімімен','В) Тек білім бөлімінің шешімімен','Г) Жоқ, аттестация заңсыз'],
-         ok:1,law:'"Мұғалім мәртебесі" Заңы 8-бап.'},
-        {cat:0,pts:40,catName:'📚 БІЛІМ',
-         q:'Инклюзивті білім беру туралы заңға сәйкес, мектеп ерекше қажеттіліктері бар баланы қабылдаудан бас тартса?',
-         opts:['А) Әкімшілік айыппұл','Б) Қылмыстық жауапкершілік','В) Ешқандай жауапкершілік жоқ','Г) Тек ескерту'],
-         ok:0,law:'ҚР ӘҚБтК 85-бап.'},
-        {cat:1,pts:10,catName:'👪 ОТБАСЫ',
-         q:'Неке қию үшін ең төменгі жас қандай?',
-         opts:['А) 16 жас','Б) 18 жас','В) 20 жас','Г) 21 жас'],
-         ok:1,law:'"Неке және отбасы" кодексі 10-бап.'},
-        {cat:1,pts:20,catName:'👪 ОТБАСЫ',
-         q:'Ата-анасы ажырасқан кезде, бала кіммен қалады?',
-         opts:['А) Әкесімен','Б) Анасымен','В) Соттың баланың мүддесіне сай шешімімен','Г) Баланың өзі таңдайды'],
-         ok:2,law:'Неке кодексі 75-бап.'},
-        {cat:1,pts:30,catName:'👪 ОТБАСЫ',
-         q:'Ата-ана балаға қатысты зорлықты заңды деп санаса болады ма?',
-         opts:['А) Иә, тәрбие мақсатында','Б) Жоқ, ешқандай зорлыққа тыйым','В) Тек дене жазасы ғана тыйым','Г) 14 жасқа дейін рұқсат'],
-         ok:1,law:'БҰҰ Бала құқығы конвенциясы 19-бап.'},
-        {cat:1,pts:40,catName:'👪 ОТБАСЫ',
-         q:'Алимент төлеуден жалтарған адамға қандай жауапкершілік?',
-         opts:['А) Тек айыппұл','Б) Мүліктік жауапкершілік','В) Қылмыстық жауапкершілік, соның ішінде бас бостандықтан айыру','Г) Ешқандай жауапкершілік жоқ'],
-         ok:2,law:'ҚК 139-бап.'},
-        {cat:2,pts:10,catName:'🏥 ДЕНСАУЛЫҚ',
-         q:'Науқас дәрігердің тағайындаған дәрі-дәрмегін алудан бас тарта ала ма?',
-         opts:['А) Жоқ, дәрігер шешім қабылдайды','Б) Иә, пациенттің хабарланған келісімі керек','В) Тек туыстары рұқсат берсе','Г) Тек сот шешімімен'],
-         ok:1,law:'"Халық денсаулығы" кодексі 136-бап.'},
-        {cat:2,pts:20,catName:'🏥 ДЕНСАУЛЫҚ',
-         q:'Дәрігер науқастың ауруын басқаларға айта ала ма?',
-         opts:['А) Иә, халық денсаулығы үшін','Б) Иә, туыстарына айтуға болады','В) Жоқ, дәрігерлік құпия сақталуы керек','Г) Тек полицияға'],
-         ok:2,law:'Кодекс 149-бап: Дәрігерлік құпия.'},
-        {cat:2,pts:30,catName:'🏥 ДЕНСАУЛЫҚ',
-         q:'Науқасқа дұрыс ем қойылмаса, қандай жауапкершілік?',
-         opts:['А) Тек тәртіптік жауапкершілік','Б) Азаматтық-құқықтық (зиянды өтеу)','В) Тек қылмыстық жауапкершілік','Г) Ешқандай жауапкершілік жоқ'],
-         ok:1,law:'ҚР АК 917-бап.'},
-        {cat:2,pts:40,catName:'🏥 ДЕНСАУЛЫҚ',
-         q:'Эвтаназияға Қазақстанда рұқсат бар ма?',
-         opts:['А) Иә, жазбаша келісімімен','Б) Жоқ, қылмыстық жауапкершілік бар','В) Тек туыстары келіссе','Г) Тек сот шешімімен'],
-         ok:1,law:'ҚК 102-бап: Эвтаназияға тыйым.'},
-        {cat:3,pts:10,catName:'🏛 ҚОҒАМ',
-         q:'Қазақстан Республикасының Конституциясы қашан қабылданды?',
-         opts:['А) 1991 жылы','Б) 1995 жылы','В) 2000 жылы','Г) 1993 жылы'],
-         ok:1,law:'ҚР Конституциясы 1995 жылы 30 тамызда.'},
-        {cat:3,pts:20,catName:'🏛 ҚОҒАМ',
-         q:'Сайлауға қатысу құқығы қанша жастан басталады?',
-         opts:['А) 16 жас','Б) 18 жас','В) 21 жас','Г) 25 жас'],
-         ok:1,law:'Конституция 33-бап.'},
-        {cat:3,pts:30,catName:'🏛 ҚОҒАМ',
-         q:'Полиция азаматтың құжатын тексеру үшін қандай негіз керек?',
-         opts:['А) Кез келген уақытта тексере алады','Б) Негізді күдік болуы керек','В) Тек жазбаша рұқсатпен','Г) Тек прокуратура санкциясымен'],
-         ok:1,law:'Әкімшілік кодекс 27.1-бап.'},
-        {cat:3,pts:40,catName:'🏛 ҚОҒАМ',
-         q:'Адам құқықтары жөніндегі уәкілді (омбудсменді) кім тағайындайды?',
-         opts:['А) Президент','Б) Парламент Сенаты','В) Парламент Мәжілісі','Г) Конституциялық Сот'],
-         ok:0,law:'"Уәкіл туралы" Заң 10-бап.'},
-    ];
+// ════════════════════════════════════════════
+function runGame(teamList){
+  const teams = teamList.map(t=>({name:t.name,members:t.members,score:0,correct:0,wrong:0}));
+  let curTeam=0;
+  const used={};   // key: catId+subId+pts → true
+  let curQ=null, timerInt=null, timeLeft=30, answered=false, ff50done=false, modalOn=false;
+  let curCatIdx=null, curSubIdx=null;
 
-    const teams = teamList.map(t => ({
-        name: t.name, members: t.members, score:0, correct:0, wrong:0
-    }));
+  // ── BOARD VIEWS ──
+  const boardCats = $('boardCats');
+  const boardSubs = $('boardSubs');
+  const boardQs   = $('boardQs');
 
-    let curTeam = 0;
-    let used = new Array(questions.length).fill(false);
-    let curQ = null, timerInt = null, timeLeft = 30;
-    let answered = false, ff50done = false, modalOn = false;
+  function showCats(){ boardCats.style.display='grid'; boardSubs.style.display='none'; boardQs.style.display='none'; }
+  function showSubs(){ boardCats.style.display='none'; boardSubs.style.display='flex'; boardQs.style.display='none'; }
+  function showQs()  { boardCats.style.display='none'; boardSubs.style.display='none'; boardQs.style.display='flex'; }
 
-    const gMsg   = document.getElementById('gMsg');
-    const gTeam  = document.getElementById('gTeam');
-    const board  = document.getElementById('gameBoard');
-    const score  = document.getElementById('scoreBoard');
-    const qCount = document.getElementById('qCounter');
-    const modal  = document.getElementById('qModal');
-    const ff     = document.getElementById('ff50');
-    const lawB   = document.getElementById('lawBtn');
-    const closeB = document.getElementById('closeQBtn');
-    const timer  = document.getElementById('timerEl');
-    const lawH   = document.getElementById('lawHint');
+  // ── RENDER CATEGORIES ──
+  function renderCats(){
+    boardCats.innerHTML = CATS.map((cat,ci)=>{
+      const totalQ = cat.subs.reduce((a,s)=>a+s.qs.length,0);
+      const usedQ  = cat.subs.reduce((a,s)=>a+s.qs.filter(q=>used[cat.id+s.id+q.pts]).length,0);
+      const pct    = Math.round(usedQ/totalQ*100);
+      return `
+        <div class="cat-card ${cat.color}" onclick="selectCat(${ci})">
+          <div class="cat-card-inner">
+            <span class="cat-emoji">${cat.emoji}</span>
+            <div class="cat-title-text">${cat.name}</div>
+            <div class="cat-sub-count">${cat.subs.length} бөлім • ${usedQ}/${totalQ}</div>
+          </div>
+          <div class="cat-progress">
+            <div class="cat-progress-bar" style="width:${pct}%"></div>
+          </div>
+        </div>`;
+    }).join('');
+    updateScoreboard();
+    updateTeamDisplay();
+  }
 
-    function msg(t) { gMsg.textContent = t; }
-    function updateTeam() {
-        gTeam.textContent = (curTeam+1)+'-ТОП: '+teams[curTeam].name;
-        score.innerHTML = teams.map((t,i) => `
-            <div class="sc-card ${i===curTeam?'active':''}">
-                <div class="sc-name">${esc(t.name)}</div>
-                <div class="sc-mem">${t.members.join(', ')}</div>
-                <div class="sc-score">${t.score} <small style="font-size:.65em;color:var(--gold);">БАЛЛ</small></div>
-            </div>
-        `).join('');
+  window.selectCat = (ci)=>{
+    curCatIdx = ci;
+    const cat = CATS[ci];
+    $('subEmoji').textContent  = cat.emoji;
+    $('subTitle').textContent  = cat.name;
+    renderSubcats(ci);
+    showSubs();
+  };
+
+  $('backToCats').onclick = ()=>{ showCats(); renderCats(); };
+
+  // ── RENDER SUBCATEGORIES ──
+  function renderSubcats(ci){
+    const cat = CATS[ci];
+    $('subGrid').innerHTML = cat.subs.map((sub,si)=>{
+      const total = sub.qs.length;
+      const done  = sub.qs.filter(q=>used[cat.id+sub.id+q.pts]).length;
+      return `
+        <div class="subcat-card" onclick="selectSub(${ci},${si})">
+          <span class="subcat-icon">${sub.emoji}</span>
+          <div class="subcat-name">${sub.name}</div>
+          <div class="subcat-pts">10 · 20 · 30 · 40 балл</div>
+          ${done>0?`<div class="subcat-done">✓ ${done}/${total} жауапталды</div>`:''}
+        </div>`;
+    }).join('');
+  }
+
+  window.selectSub = (ci,si)=>{
+    curSubIdx = si;
+    const cat = CATS[ci];
+    const sub = cat.subs[si];
+    $('qlistTitle').textContent = sub.emoji+' '+sub.name;
+    renderQCards(ci,si);
+    showQs();
+  };
+
+  $('backToSubs').onclick = ()=>{ showSubs(); renderSubcats(curCatIdx); };
+
+  // ── RENDER QUESTION CARDS ──
+  function renderQCards(ci,si){
+    const cat = CATS[ci];
+    const sub = cat.subs[si];
+    $('qCardsRow').innerHTML = sub.qs.map(q=>{
+      const k   = cat.id+sub.id+q.pts;
+      const done = !!used[k];
+      return `
+        <div class="q-card ${done?'q-used':'q-free'}" ${done?'':` onclick="openQ('${cat.id}','${sub.id}',${sub.qs.indexOf(q)})"`}>
+          <span class="q-status">${done?'✅':'❓'}</span>
+          <span class="q-pts">${q.pts}</span>
+          <span class="q-pts-label">балл</span>
+        </div>`;
+    }).join('');
+  }
+
+  // ── OPEN QUESTION ──
+  window.openQ = (catId,subId,qi)=>{
+    if(modalOn)return;
+    const cat = CATS.find(c=>c.id===catId);
+    const sub = cat.subs.find(s=>s.id===subId);
+    const q   = sub.qs[qi];
+    const key = catId+subId+q.pts;
+    if(used[key])return;
+    curQ = {catId,subId,qi,key,q};
+
+    $('qmCat').textContent = cat.emoji+' '+cat.name+' › '+sub.emoji+' '+sub.name+' · '+q.pts+' балл';
+    $('qBody').textContent = q.q;
+    $('lawBox').textContent = q.law;
+    $('lawBox').classList.remove('on');
+    $('lawBtn').innerHTML = '📖 Заң';
+    $('ff50Btn').classList.remove('off');
+    ff50done=false; answered=false;
+
+    $('answersGrid').innerHTML = q.opts.map((o,i)=>`
+      <button class="ans" data-i="${i}">
+        <span class="ans-prefix">${['А','Б','В','Г'][i]}</span>
+        ${esc(o.replace(/^[АБВГ]\) /,''))}
+      </button>
+    `).join('');
+    document.querySelectorAll('.ans').forEach(b=>b.onclick=onAns);
+
+    timeLeft=30; $('timerBox').textContent=30; $('timerBox').className='timer-box';
+    clearInterval(timerInt);
+    timerInt=setInterval(()=>{
+      timeLeft--;
+      $('timerBox').textContent=timeLeft;
+      $('timerBox').className='timer-box'+(timeLeft<=10?' urgent':'');
+      if(timeLeft<=0){clearInterval(timerInt);onTimeout();}
+    },1000);
+
+    $('qOverlay').classList.add('on'); modalOn=true;
+  };
+
+  function onAns(e){
+    const btn=e.currentTarget, idx=+btn.dataset.i, q=curQ.q;
+    document.querySelectorAll('.ans').forEach(b=>b.style.pointerEvents='none');
+    if(idx===q.ok){
+      btn.classList.add('correct');
+      teams[curTeam].score   += q.pts;
+      teams[curTeam].correct ++;
+      setMsg(`ДҰРЫС! 🎉 +${q.pts} балл — ${teams[curTeam].name}`);
+    } else {
+      btn.classList.add('wrong');
+      teams[curTeam].wrong++;
+      document.querySelectorAll('.ans').forEach(b=>{ if(+b.dataset.i===q.ok) b.classList.add('correct'); });
+      setMsg(`ҚАТЕ! 😕 — ${teams[curTeam].name}`);
     }
+    answered=true; used[curQ.key]=true;
+    curTeam=(curTeam+1)%teams.length;
+    updateTeamDisplay(); clearInterval(timerInt);
+  }
 
-    function renderBoard() {
-        const cats = ['📚 БІЛІМ','👪 ОТБАСЫ','🏥 ДЕНСАУЛЫҚ','🏛 ҚОҒАМ'];
-        let h = '<div class="categories">';
-        for (let c=0;c<4;c++) {
-            h += '<div class="cat-col">';
-            h += `<div class="cat-title">${cats[c]}</div>`;
-            questions.filter(q=>q.cat===c).forEach(q => {
-                const i = questions.indexOf(q);
-                const u = used[i];
-                h += `<div class="q-card ${u?'used-card':''}" data-i="${i}">
-                    <div class="si ${u?'used':'free'}"><i class="fas ${u?'fa-check':'fa-hourglass'}"></i></div>
-                    ${q.pts}<small>БАЛЛ</small>
-                </div>`;
-            });
-            h += '</div>';
-        }
-        h += '</div>';
-        board.innerHTML = h;
-        document.querySelectorAll('.q-card:not(.used-card)').forEach(el => {
-            el.onclick = () => { if (!modalOn) openQ(+el.dataset.i); };
-        });
-        qCount.textContent = `Жауапталған: ${used.filter(Boolean).length} / ${questions.length}`;
-        updateTeam();
-    }
+  function onTimeout(){
+    const q=curQ.q;
+    document.querySelectorAll('.ans').forEach(b=>{
+      b.style.pointerEvents='none';
+      if(+b.dataset.i===q.ok) b.classList.add('correct');
+    });
+    answered=true; used[curQ.key]=true;
+    teams[curTeam].wrong++; setMsg('УАҚЫТ БІТТІ! ⏰');
+    curTeam=(curTeam+1)%teams.length; updateTeamDisplay();
+  }
 
-    function openQ(i) {
-        curQ = i;
-        const q = questions[i];
-        document.getElementById('mCat').innerHTML = `<i class="fas fa-gavel"></i> ${q.catName} · <span id="mPts">${q.pts}</span> БАЛЛ`;
-        document.getElementById('qText').textContent = q.q;
-        lawH.textContent = q.law;
-        lawH.classList.remove('on');
-        lawB.innerHTML = '<i class="fas fa-book"></i>ЗАҢ';
-        ff.classList.remove('off');
-        ff50done = false; answered = false;
+  $('ff50Btn').onclick=()=>{
+    if(answered||ff50done){toast(answered?'Жауап берілді!':'50/50 қолданылды!');return;}
+    const q=curQ.q;
+    const btns=[...document.querySelectorAll('.ans')];
+    const wrong=btns.filter((_,i)=>i!==q.ok).sort(()=>Math.random()-.5).slice(0,2);
+    wrong.forEach(b=>b.classList.add('no-ptr'));
+    ff50done=true; $('ff50Btn').classList.add('off'); toast('50/50 қолданылды! ✨');
+  };
 
-        document.getElementById('answersEl').innerHTML = q.opts.map((o,idx) => `
-            <button class="ans-btn" data-idx="${idx}">
-                <span class="pfx">${['А','Б','В','Г'][idx]}</span>
-                ${esc(o.replace(/^[АБВГ]\) /,''))}
-            </button>
-        `).join('');
-        document.querySelectorAll('.ans-btn').forEach(b => b.onclick = onAns);
+  $('lawBtn').onclick=()=>{
+    if(!answered){toast('Алдымен жауап беріңіз! ⚠️');return;}
+    $('lawBox').classList.toggle('on');
+    $('lawBtn').innerHTML=$('lawBox').classList.contains('on')?'📖 Заңды жабу':'📖 Заң';
+  };
 
-        timeLeft = 30; timer.textContent = 30; timer.style.color='var(--gold)';
-        clearInterval(timerInt);
-        timerInt = setInterval(() => {
-            timeLeft--;
-            timer.textContent = timeLeft;
-            timer.style.color = timeLeft<=10?'#ff4444':'var(--gold)';
-            if (timeLeft<=0) { clearInterval(timerInt); timeout(); }
-        }, 1000);
+  $('closeQBtn').onclick=()=>{
+    $('qOverlay').classList.remove('on'); modalOn=false;
+    $('lawBox').classList.remove('on'); clearInterval(timerInt);
+    // Refresh current view
+    if(curCatIdx!==null && curSubIdx!==null) renderQCards(curCatIdx,curSubIdx);
+    renderCats();
+    showQs();
+    // Check all done
+    const totalQ=CATS.reduce((a,c)=>a+c.subs.reduce((b,s)=>b+s.qs.length,0),0);
+    if(Object.keys(used).length>=totalQ) showFinish();
+    else setMsg(`${teams[curTeam].name} — категория таңда! 🎯`);
+  };
 
-        modal.classList.add('on'); modalOn = true;
-    }
+  function setMsg(t){$('gMsg').textContent=t;}
 
-    function onAns(e) {
-        const btn = e.currentTarget;
-        const idx = +btn.dataset.idx;
-        const q   = questions[curQ];
-        document.querySelectorAll('.ans-btn').forEach(b => b.style.pointerEvents='none');
-        if (idx===q.ok) {
-            btn.classList.add('correct');
-            teams[curTeam].score   += q.pts;
-            teams[curTeam].correct++;
-            msg(`ДҰРЫС! 🎉 +${q.pts} БАЛЛ — ${teams[curTeam].name}`);
-        } else {
-            btn.classList.add('wrong');
-            teams[curTeam].wrong++;
-            document.querySelectorAll('.ans-btn').forEach(b => {
-                if (+b.dataset.idx===q.ok) b.classList.add('correct');
-            });
-            msg(`ҚАТЕ! 😕 — ${teams[curTeam].name}`);
-        }
-        answered = true;
-        used[curQ] = true;
-        curTeam = (curTeam+1) % teams.length;
-        updateTeam();
-        clearInterval(timerInt);
-    }
+  function updateTeamDisplay(){
+    $('gTeam').textContent=(curTeam+1)+'-ТОП: '+teams[curTeam].name;
+    updateScoreboard();
+  }
 
-    function timeout() {
-        const q = questions[curQ];
-        document.querySelectorAll('.ans-btn').forEach(b => {
-            b.style.pointerEvents='none';
-            if (+b.dataset.idx===q.ok) b.classList.add('correct');
-        });
-        answered = true; used[curQ] = true;
-        teams[curTeam].wrong++;
-        msg('УАҚЫТ БІТТІ! ⏰');
-        curTeam = (curTeam+1) % teams.length;
-        updateTeam();
-    }
+  function updateScoreboard(){
+    $('scoreBoard').innerHTML=teams.map((t,i)=>`
+      <div class="sc-card ${i===curTeam?'sc-active':''}">
+        <div class="sc-name">${esc(t.name)}</div>
+        <div class="sc-mem">${t.members.join(', ')}</div>
+        <div class="sc-score">${t.score}<small> балл</small></div>
+      </div>
+    `).join('');
+  }
 
-    ff.onclick = () => {
-        if (answered || ff50done) { toast(answered?'Жауап берілді!':'50/50 қолданылды!'); return; }
-        const q = questions[curQ];
-        const btns = [...document.querySelectorAll('.ans-btn')];
-        const wrong = btns.filter((_,i)=>i!==q.ok).sort(()=>Math.random()-.5).slice(0,2);
-        wrong.forEach(b => b.classList.add('no-click'));
-        ff50done = true; ff.classList.add('off');
-        toast('50/50 қолданылды! ✨');
-    };
+  function showFinish(){
+    const sorted=[...teams].sort((a,b)=>b.score-a.score);
+    let medals='';
+    if(sorted[0]) medals+=`<div class="fin-rank fin-r1">🥇 1-орын: ${esc(sorted[0].name)} — ${sorted[0].score} балл</div>`;
+    if(sorted[1]) medals+=`<div class="fin-rank fin-r2">🥈 2-орын: ${esc(sorted[1].name)} — ${sorted[1].score} балл</div>`;
+    if(sorted[2]) medals+=`<div class="fin-rank fin-r3">🥉 3-орын: ${esc(sorted[2].name)} — ${sorted[2].score} балл</div>`;
+    const stats='<div class="stats-box">'+sorted.map((t,i)=>{
+      const tot=t.correct+t.wrong;
+      return `<div class="stat-row"><span>${i+1}. ${esc(t.name)} (${esc(t.members.join(', '))})</span><span>${t.score} балл | ${t.correct}/${tot}</span></div>`;
+    }).join('')+'</div>';
+    $('gameWrap').innerHTML=`<div class="finish-wrap">
+      <div class="fin-title">ОЙЫН АЯҚТАЛДЫ!</div>
+      <div class="fin-medal">🏆</div>
+      ${medals}
+      <h3 style="color:var(--gold);margin-top:20px">📊 Толық статистика</h3>
+      ${stats}
+      <button class="restart-btn" onclick="location.reload()">↺ Қайта ойнау</button>
+    </div>`;
+    launchConfetti();
+  }
 
-    lawB.onclick = () => {
-        if (!answered) { toast('Алдымен жауап беріңіз! ⚠️'); return; }
-        lawH.classList.toggle('on');
-        lawB.innerHTML = lawH.classList.contains('on')
-            ? '<i class="fas fa-book-open"></i>ЗАҢ'
-            : '<i class="fas fa-book"></i>ЗАҢ';
-    };
-
-    closeB.onclick = () => {
-        modal.classList.remove('on'); modalOn = false;
-        lawH.classList.remove('on'); clearInterval(timerInt);
-        renderBoard();
-        if (used.every(Boolean)) finish();
-        else msg(`${teams[curTeam].name} — сұрақ таңда! 🎯`);
-    };
-
-    function finish() {
-        const sorted = [...teams].sort((a,b)=>b.score-a.score);
-        let medals='';
-        if(sorted[0]) medals+=`<div class="f-rank-1">🥇 1-ОРЫН: ${esc(sorted[0].name)} — ${sorted[0].score} БАЛЛ</div>`;
-        if(sorted[1]) medals+=`<div class="f-rank-2">🥈 2-ОРЫН: ${esc(sorted[1].name)} — ${sorted[1].score} БАЛЛ</div>`;
-        if(sorted[2]) medals+=`<div class="f-rank-3">🥉 3-ОРЫН: ${esc(sorted[2].name)} — ${sorted[2].score} БАЛЛ</div>`;
-        const stats='<div class="stats-tbl">'+sorted.map((t,i)=>{
-            const tot=t.correct+t.wrong;
-            return `<div class="stats-row"><span>${i+1}. ${esc(t.name)} (${esc(t.members.join(', '))})</span><span>${t.score} БАЛЛ | ${t.correct}/${tot}</span></div>`;
-        }).join('')+'</div>';
-        board.innerHTML=`<div class="finish-screen"><h2>ОЙЫН АЯҚТАЛДЫ!</h2><div class="medal">🏆</div>${medals}<h3 style="color:var(--gold);margin-top:20px;">📊 СТАТИСТИКА:</h3>${stats}<button class="restart-btn" onclick="location.reload()"><i class="fas fa-undo-alt"></i> ҚАЙТА ОЙНАУ</button></div>`;
-        score.innerHTML=''; launchConfetti();
-    }
-
-    msg(`${teams[0].name} — ойынды бастайды! 🎯`);
-    renderBoard();
+  setMsg(`${teams[0].name} — ойынды бастайды! 🎯`);
+  updateTeamDisplay();
+  showCats();
+  renderCats();
 }
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 //  CONFETTI
-// ════════════════════════════════════════════════════════
-function launchConfetti() {
-    const canvas = document.getElementById('confettiCanvas');
-    const ctx    = canvas.getContext('2d');
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-    const pieces  = Array.from({length:130}, () => ({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height - canvas.height,
-        r: Math.random()*8+4,
-        d: Math.random()*130+70,
-        color: ['#FFD700','#FF4500','#27ae60','#4ECDC4','#FF69B4','#fff'][Math.floor(Math.random()*6)],
-        tilt: Math.random()*10-10, tc: 0
-    }));
-    let frame=0;
-    const anim = setInterval(() => {
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        pieces.forEach(p => {
-            p.tc+=.1; p.y+=Math.cos(frame/10+p.d)+2; p.x+=Math.sin(frame/10);
-            p.tilt = Math.sin(p.tc)*15;
-            ctx.beginPath(); ctx.lineWidth=p.r; ctx.strokeStyle=p.color;
-            ctx.moveTo(p.x+p.tilt+p.r/2, p.y);
-            ctx.lineTo(p.x+p.tilt, p.y+p.tilt+p.r/2);
-            ctx.stroke();
-        });
-        frame++;
-        if (frame > 200) { clearInterval(anim); ctx.clearRect(0,0,canvas.width,canvas.height); }
-    }, 16);
+// ════════════════════════════════════════════
+function launchConfetti(){
+  const cv=$('confetti'), cx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight;
+  const colors=['#f5c842','#3b82f6','#a855f7','#22c55e','#ef4444','#fff'];
+  const p=Array.from({length:120},()=>({
+    x:Math.random()*cv.width, y:Math.random()*cv.height-cv.height,
+    r:Math.random()*7+3, d:Math.random()*120+60,
+    c:colors[Math.floor(Math.random()*colors.length)],
+    t:Math.random()*10-10, tc:0
+  }));
+  let f=0;
+  const a=setInterval(()=>{
+    cx.clearRect(0,0,cv.width,cv.height);
+    p.forEach(pp=>{
+      pp.tc+=.1; pp.y+=Math.cos(f/10+pp.d)+2; pp.x+=Math.sin(f/10);
+      pp.t=Math.sin(pp.tc)*14;
+      cx.beginPath(); cx.lineWidth=pp.r; cx.strokeStyle=pp.c;
+      cx.moveTo(pp.x+pp.t+pp.r/2,pp.y);
+      cx.lineTo(pp.x+pp.t,pp.y+pp.t+pp.r/2);
+      cx.stroke();
+    });
+    f++; if(f>220){clearInterval(a);cx.clearRect(0,0,cv.width,cv.height);}
+  },16);
 }
 </script>
 </body>
