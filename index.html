@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Білім Сайысы — Командалық ойын</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,600,1,0" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
 <script type="module">
@@ -41,17 +42,25 @@
   --bg2:      #0d1120;
   --gold:     #f5c842;
   --gold2:    #c89e1a;
-  --c1:       #3b82f6; /* Білім - blue */
+  --c1:       #3b82f6;
   --c1d:      #1d4ed8;
-  --c2:       #f59e0b; /* Заң - amber */
+  --c2:       #f59e0b;
   --c2d:      #b45309;
-  --c3:       #a855f7; /* Ойлан-тап - purple */
+  --c3:       #a855f7;
   --c3d:      #7e22ce;
-  --c4:       #22c55e; /* Қазақстан - green */
-  --c4d:      #15803d;
   --radius:   18px;
   --shadow:   0 8px 32px rgba(0,0,0,.5);
 }
+
+/* Material Symbols */
+.ms{
+  font-family:'Material Symbols Rounded';
+  font-size:2.8rem;line-height:1;
+  display:block;margin-bottom:8px;
+  font-style:normal;
+}
+.ms-sm{font-family:'Material Symbols Rounded';font-size:1.4rem;line-height:1;font-style:normal;vertical-align:middle}
+.ms-md{font-family:'Material Symbols Rounded';font-size:2rem;line-height:1;font-style:normal;display:block;margin-bottom:6px}
 
 body{
   min-height:100vh;
@@ -309,17 +318,18 @@ body{
 /* Category cards grid */
 .cat-grid{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:16px;
 }
-@media(max-width:900px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.cat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.cat-grid{grid-template-columns:1fr}}
 
 .cat-card{
   border-radius:20px;overflow:hidden;
   cursor:pointer;transition:.25s;
   border:2px solid transparent;
 }
-.cat-card:hover{transform:translateY(-4px);box-shadow:0 0 0 3px #f5c842,0 12px 32px rgba(245,200,66,.35);border-color:#f5c842!important}
+.cat-card:hover{transform:translateY(-4px);box-shadow:0 0 0 3px #f5c842,0 12px 32px rgba(245,200,66,.3);border-color:#f5c842!important}
 .cat-card:hover .cat-title-text{color:#f5c842}
 .cat-card:hover .cat-icon-wrap{background:rgba(245,200,66,.2);box-shadow:0 0 20px rgba(245,200,66,.4)}
 .cat-card.cat-1{background:linear-gradient(145deg,#1e3a8a,#1d4ed8);border-color:rgba(96,165,250,.3)}
@@ -327,8 +337,15 @@ body{
 .cat-card.cat-3{background:linear-gradient(145deg,#4c1d95,#7e22ce);border-color:rgba(192,132,252,.3)}
 .cat-card.cat-4{background:linear-gradient(145deg,#14532d,#15803d);border-color:rgba(74,222,128,.3)}
 
-.cat-card-inner{padding:24px 20px;text-align:center}
-.cat-emoji{font-size:3rem;margin-bottom:10px;display:block}
+.cat-card-inner{padding:28px 20px;text-align:center}
+.cat-icon-wrap{
+  width:72px;height:72px;border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;
+  background:rgba(255,255,255,.12);
+  box-shadow:0 4px 16px rgba(0,0,0,.3);
+}
+.cat-icon-wrap .ms{font-size:2.6rem;margin:0}
 .cat-title-text{font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:.5px}
 .cat-sub-count{font-size:.8rem;color:rgba(255,255,255,.6);margin-top:4px}
 .cat-progress{
@@ -366,10 +383,16 @@ body{
   background:rgba(255,255,255,.05);
   text-align:center;
 }
-.subcat-card:hover{background:rgba(245,200,66,.12);border-color:#f5c842;transform:translateY(-3px);box-shadow:0 0 0 2px rgba(245,200,66,.4),0 8px 24px rgba(245,200,66,.2)}
+.subcat-card:hover{background:rgba(245,200,66,.1);border-color:#f5c842;transform:translateY(-3px);box-shadow:0 0 0 2px rgba(245,200,66,.4),0 8px 24px rgba(245,200,66,.2)}
 .subcat-card:hover .subcat-name{color:#f5c842}
 .subcat-card:hover .subcat-icon-wrap{background:rgba(245,200,66,.2)}
-.subcat-icon{font-size:2.2rem;margin-bottom:8px;display:block}
+.subcat-icon-wrap{
+  width:56px;height:56px;border-radius:16px;
+  background:rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 10px;
+}
+.subcat-icon-wrap .ms{font-size:2rem;margin:0}
 .subcat-name{font-size:1rem;font-weight:800;color:#fff}
 .subcat-pts{font-size:.78rem;color:rgba(255,255,255,.5);margin-top:4px}
 .subcat-done{font-size:.75rem;color:#4ade80;margin-top:3px}
@@ -741,14 +764,14 @@ body{
   <!-- Top bar -->
   <div class="topbar">
     <div class="topbar-logo">
-      <span class="logo-icon">🏆</span>
+      <span class="logo-icon"><i class="ms" style="color:#f5c842;font-size:2.2rem;margin:0">emoji_events</i></span>
       <div class="logo-text">
         <h1>БІЛІМ САЙЫСЫ</h1>
         <p>Командалық викторина ойыны</p>
       </div>
     </div>
     <div class="topbar-badges">
-      <span class="badge">🎯 Интерактивті ойын</span>
+      <span class="badge"><i class="ms-sm" style="color:#60a5fa">sports_esports</i> Интерактивті ойын</span>
       <span class="badge blue" id="mainCount">0 команда</span>
     </div>
   </div>
@@ -757,7 +780,7 @@ body{
   <div id="regPanel" class="reg-panel">
     <!-- QR -->
     <div class="qr-block">
-      <h3>📱 QR-КОД</h3>
+      <h3><i class="ms-sm" style="color:#f5c842">qr_code_scanner</i> QR-КОД</h3>
       <div id="qrcode"></div>
       <div class="qr-steps">
         <div class="qr-step"><span class="qr-num">1</span>QR кодты сканерлеңіз</div>
@@ -775,19 +798,19 @@ body{
       </div>
       <div class="teams-grid" id="teamsGrid">
         <div class="no-teams" id="noTeamsMsg">
-          <span class="no-teams-icon">📲</span>
+          <i class="ms" style="color:rgba(245,200,66,.3);font-size:3rem;margin:0 0 10px">phone_iphone</i>
           Командалар QR арқылы тіркелуін күтуде...
         </div>
       </div>
 
       <div class="action-row">
-        <button class="btn btn-gold" id="drawBtn" disabled>🎲 Жеребе</button>
-        <button class="btn btn-green" id="startBtn">▶️ Ойынды бастау</button>
-        <button class="btn btn-ghost btn-sm" id="clearBtn">🗑 Тазалау</button>
+        <button class="btn btn-gold" id="drawBtn" disabled><i class="ms-sm">casino</i> Жеребе</button>
+        <button class="btn btn-green" id="startBtn"><i class="ms-sm">play_circle</i> Ойынды бастау</button>
+        <button class="btn btn-ghost btn-sm" id="clearBtn"><i class="ms-sm">delete</i> Тазалау</button>
       </div>
       <div class="draw-result" id="drawResult">
         <div class="dr-winner" id="drWinner">—</div>
-        <div class="dr-hint">Бірінші ойнайды • Ойынды бастауға болады</div>
+        <div class="dr-hint">Жеребе ретімен ойналады • Ойынды бастауға болады</div>
       </div>
     </div>
   </div>
@@ -797,7 +820,6 @@ body{
 
     <!-- Game top bar -->
     <div class="game-topbar">
-      <span class="gt-avatar">⚖️</span>
       <span class="gt-msg" id="gMsg">Ойын басталды! Бөлімді таңдаңыз</span>
       <span class="gt-team" id="gTeam">—</span>
     </div>
@@ -809,7 +831,7 @@ body{
 
     <div class="subcat-view" id="boardSubs">
       <div class="subcat-header">
-        <button class="back-btn" id="backToCats">← Артқа</button>
+        <button class="back-btn" id="backToCats"><i class="ms-sm">arrow_back</i> Артқа</button>
         <span class="subcat-emoji" id="subEmoji"></span>
         <span class="subcat-title" id="subTitle"></span>
       </div>
@@ -818,7 +840,7 @@ body{
 
     <div class="qlist-view" id="boardQs">
       <div class="qlist-header">
-        <button class="back-btn" id="backToSubs">← Артқа</button>
+        <button class="back-btn" id="backToSubs"><i class="ms-sm">arrow_back</i> Артқа</button>
         <span class="qlist-title" id="qlistTitle"></span>
       </div>
       <div class="q-cards-row" id="qCardsRow"></div>
@@ -845,16 +867,16 @@ body{
 
   <!-- Step 1 -->
   <div class="p-step on" id="ps1">
-    <div class="p-bigicon">🏆</div>
+    <i class="ms" style="color:#f5c842;font-size:5rem;margin-bottom:16px;animation:floatIcon 3s ease-in-out infinite">groups</i>
     <div class="p-title">КОМАНДА АТЫ</div>
     <div class="p-sub">Командаңыздың атын жазыңыз</div>
     <input class="p-inp" type="text" id="tNameInp" placeholder="Мысалы: Жұлдыздар" maxlength="30">
-    <button class="p-btn" id="toStep2Btn">Келесі →</button>
+    <button class="p-btn" id="toStep2Btn">Келесі <i class="ms-sm">arrow_forward</i></button>
   </div>
 
   <!-- Step 2 -->
   <div class="p-step" id="ps2">
-    <div class="p-bigicon">👥</div>
+    <i class="ms" style="color:#60a5fa;font-size:5rem;margin-bottom:16px;animation:floatIcon 3s ease-in-out infinite">person_add</i>
     <div class="p-title">МҮШЕЛЕР</div>
     <div class="p-sub">Командаңыздың мүшелерін қосыңыз</div>
     <div class="team-label-phone">
@@ -863,14 +885,14 @@ body{
     </div>
     <div class="mems-list" id="memsList"></div>
     <input class="p-inp" type="text" id="memInp" placeholder="Мүшенің аты" maxlength="40">
-    <button class="p-btn" id="addMemBtn">+ Мүше қосу</button>
-    <button class="p-btn ghost" id="finishRegBtn">✓ Тіркеуді аяқтау</button>
+    <button class="p-btn" id="addMemBtn"><i class="ms-sm">person_add</i> Мүше қосу</button>
+    <button class="p-btn ghost" id="finishRegBtn"><i class="ms-sm">check</i> Тіркеуді аяқтау</button>
   </div>
 
   <!-- Step 3 -->
   <div class="p-step" id="ps3">
     <div class="suc-wrap">
-      <div class="suc-icon">✅</div>
+      <i class="ms" style="color:#4ade80;font-size:5rem;margin-bottom:14px;animation:bounce .5s ease">check_circle</i>
       <div class="suc-title">ТІРКЕЛДІ!</div>
       <div class="p-sub">Командаңыз сәтті тіркелді</div>
       <div class="suc-tname" id="sucName">—</div>
@@ -882,7 +904,7 @@ body{
           Барлық командалар тіркелгенде ойын басталады
         </small>
       </div>
-      <button class="p-btn" id="anotherTeamBtn" style="margin-top:22px;max-width:380px">+ Тағы бір команда</button>
+      <button class="p-btn" id="anotherTeamBtn" style="margin-top:22px;max-width:380px"><i class="ms-sm">add</i> Тағы бір команда</button>
     </div>
   </div>
 </div>
@@ -903,16 +925,16 @@ body{
   <div class="q-modal">
     <div class="qm-head">
       <div class="qm-cat" id="qmCat">—</div>
-      <div class="timer-box" id="timerBox">20</div>
+      <div class="timer-box" id="timerBox">30</div>
     </div>
     <div class="q-body" id="qBody">—</div>
     <div class="answers-grid" id="answersGrid"></div>
     <div class="qm-foot">
       <div class="help-row">
-        <button class="help-btn" id="ff50Btn">✂️ 50/50</button>
-        <button class="help-btn" id="lawBtn">📖 Жауабы</button>
+        <button class="help-btn" id="ff50Btn"><i class="ms-sm" style="color:#f5c842">content_cut</i> 50/50</button>
+        <button class="help-btn" id="lawBtn"><i class="ms-sm" style="color:#60a5fa">menu_book</i> Жауабы</button>
       </div>
-      <button class="close-q" id="closeQBtn">✕ Жабу</button>
+      <button class="close-q" id="closeQBtn"><i class="ms-sm">close</i> Жабу</button>
     </div>
     <div class="law-box" id="lawBox"></div>
   </div>
@@ -947,42 +969,42 @@ function boot(){
 // ════════════════════════════════════════════
 const CATS = [
   {
-    id:'bilim', emoji:'🎓', name:'Білім', color:'cat-1',
+    id:'bilim', icon:'school', iconColor:'#60a5fa', name:'Білім', color:'cat-1',
     subs:[
       {
-        id:'info', emoji:'💻', name:'Информатика',
+        id:'cifr', icon:'computer', iconColor:'#93c5fd', name:'Цифрландыру',
         qs:[
-          {pts:10, q:'Компьютерде 1 байт неше битке тең?', opts:['А) 4 бит','Б) 8 бит','В) 16 бит','Г) 32 бит'], ok:1, law:'Информатика негіздері: 1 байт = 8 бит.'},
-          {pts:20, q:'HTML-де сілтеме жасау үшін қандай тег қолданылады?', opts:['А) <link>','Б) <src>','В) <a>','Г) <href>'], ok:2, law:'HTML негіздері: <a href="..."> — гиперсілтеме тегі.'},
-          {pts:30, q:'Интернет желісін бірінші дамытқан жоба қалай аталады?', opts:['А) INTERNET','Б) ARPANET','В) USENET','Г) BITNET'], ok:1, law:'1969 жылы АҚШ Қорғаныс министрлігі ARPANET жобасын іске қосты.'},
-          {pts:40, q:'Python тілінде тізімнің соңғы элементін алу үшін қандай индекс қолданылады?', opts:['А) 0','Б) -1','В) last','Г) end'], ok:1, law:'Python-да теріс индекстер соңынан санайды: -1 — соңғы элемент.'},
+          {pts:10, q:'Цифрлық экономика дегеніміз не?', opts:['А) Тек электронды сауда','Б) Деректер мен цифрлық технологияларға негізделген экономика','В) Банктің онлайн жүйесі','Г) Интернет-дүкен'], ok:1, law:'Цифрлық экономика — деректерді, алгоритмдерді және цифрлық технологияларды пайдаланатын экономикалық қызмет жүйесі.'},
+          {pts:20, q:'Электрондық үкімет (e-gov) не үшін қолданылады?', opts:['А) Тек интернет-банкинг','Б) Мемлекеттік қызметтерді онлайн ұсыну','В) Тек онлайн сауда','Г) Ойын платформасы'], ok:1, law:'Электрондық үкімет — мемлекеттік қызметтерді цифрлық арналар арқылы жеткізу жүйесі.'},
+          {pts:30, q:'Жасанды интеллект (AI) термині алғаш қай жылы енгізілді?', opts:['А) 1950','Б) 1956','В) 1969','Г) 1980'], ok:1, law:'1956 жылы Джон Маккарти "Жасанды интеллект" терминін ғылыми конференцияда алғаш ресми қолданды.'},
+          {pts:40, q:'Блокчейн технологиясының негізгі артықшылығы не?', opts:['А) Жылдам интернет','Б) Деректердің ашықтығы мен өзгертілмейтіндігі','В) Арзан баға','Г) Қарапайым интерфейс'], ok:1, law:'Блокчейн — деректер блоктарын тізбекке біріктіретін, өзгертуге болмайтын таратылған тізілім технологиясы.'},
         ]
       },
       {
-        id:'bio', emoji:'🧬', name:'Биология',
+        id:'ped', icon:'cast_for_education', iconColor:'#6ee7b7', name:'Педагогика',
         qs:[
-          {pts:10, q:'Фотосинтез процесі қай органда өтеді?', opts:['А) Тамыр','Б) Жапырақ','В) Сабақ','Г) Гүл'], ok:1, law:'Фотосинтез — жасыл өсімдіктердің жапырақтарындағы хлоропласттарда жүреді.'},
-          {pts:20, q:'Адам ағзасындағы ең ірі мүше қайсы?', opts:['А) Бауыр','Б) Өкпе','В) Тері','Г) Жүрек'], ok:2, law:'Тері — адам ағзасының ең ірі мүшесі, дене салмағының ~15%-ын құрайды.'},
-          {pts:30, q:'ДНҚ-ның толық атауы қандай?', opts:['А) Динуклеин қышқылы','Б) Дезоксирибонуклеин қышқылы','В) Диаминонуклеин қышқылы','Г) Дирибонуклеин қышқылы'], ok:1, law:'ДНҚ — Дезоксирибонуклеин қышқылы, тұқым қуалаушылық ақпаратын сақтайды.'},
-          {pts:40, q:'Адамда қанша хромосома бар (диплоидты жиын)?', opts:['А) 23','Б) 44','В) 46','Г) 48'], ok:2, law:'Адамда 46 хромосома (23 жұп) бар: 22 жұп аутосома + 1 жұп жыныс хромосомасы.'},
+          {pts:10, q:'Педагогика нені зерттейді?', opts:['А) Медицинаны','Б) Оқыту мен тәрбие беру теориясы мен практикасын','В) Психологияны','Г) Философияны'], ok:1, law:'Педагогика — оқыту, тәрбие және білім беру үдерістерін зерттейтін ғылым.'},
+          {pts:20, q:'Формативтік бағалау дегеніміз не?', opts:['А) Жылдық қорытынды баға','Б) Оқу үдерісінде жүргізілетін кері байланыс бағалауы','В) Сынақ нәтижесі','Г) Рейтинг жүйесі'], ok:1, law:'Формативтік бағалау — оқушының дамуын бақылау және кері байланыс беру мақсатында үздіксіз жүргізілетін бағалау.'},
+          {pts:30, q:'Дифференциалды оқыту дегеніміз не?', opts:['А) Барлығын бірдей оқыту','Б) Оқушылардың жеке ерекшеліктеріне сай оқытуды бейімдеу','В) Топтық жұмыс','Г) Дистанциялық оқыту'], ok:1, law:'Дифференциалды оқыту — әр оқушының қабілеті мен қажеттілігіне қарай оқу мазмұны мен әдісін бейімдеу.'},
+          {pts:40, q:'Блум таксономиясының жоғарғы деңгейі қайсы?', opts:['А) Білу','Б) Түсіну','В) Талдау','Г) Бағалау (жасау)'], ok:3, law:'Блум таксономиясы 6 деңгейден тұрады: Білу → Түсіну → Қолдану → Талдау → Синтез → Бағалау/Жасау.'},
         ]
       },
       {
-        id:'geo', emoji:'🌍', name:'География',
+        id:'soft', icon:'handshake', iconColor:'#fdba74', name:'Soft-skills',
         qs:[
-          {pts:10, q:'Дүниежүзіндегі ең ұзын өзен қайсы?', opts:['А) Амазонка','Б) Нил','В) Янцзы','Г) Миссисипи'], ok:1, law:'Нил өзені — 6650 км-мен дүниежүзіндегі ең ұзын өзен.'},
-          {pts:20, q:'Қазақстанның ең биік нүктесі қайсы?', opts:['А) Белуха тауы','Б) Хан Тәңірі шыңы','В) Талғар шыңы','Г) Мұзтау'], ok:1, law:'Хан Тәңірі — 6995 м, Қазақстанның ең биік нүктесі.'},
-          {pts:30, q:'Дүниежүзіндегі ең терең көл қайсы?', opts:['А) Каспий теңізі','Б) Байкал','В) Арал','Г) Балқаш'], ok:1, law:'Байкал — 1642 м тереңдікпен дүниежүзіндегі ең терең тұщы су көлі.'},
-          {pts:40, q:'Ең ірі материк қайсы?', opts:['А) Африка','Б) Солтүстік Америка','В) Еуразия','Г) Антарктида'], ok:2, law:'Еуразия — 53,9 млн шаршы километрмен ең ірі материк.'},
+          {pts:10, q:'Soft skills (жұмсақ дағдылар) дегеніміз не?', opts:['А) Техникалық білік','Б) Тұлғааралық қарым-қатынас және мінез-құлық дағдылары','В) Компьютер дағдылары','Г) Математика білімі'], ok:1, law:'Soft skills — техникалық емес, адамдармен жұмыс жасауға, коммуникацияға, лидерлікке байланысты дағдылар.'},
+          {pts:20, q:'Эмоционалдық интеллект (EQ) нені білдіреді?', opts:['А) IQ-дан жоғары болу','Б) Өз және басқалардың эмоцияларын түсіну, басқару қабілеті','В) Жылдам оқу қабілеті','Г) Логикалық ойлау'], ok:1, law:'EQ — өзінің және айналасындағылардың эмоциясын тану, түсіну, басқару және пайдалану қабілеті.'},
+          {pts:30, q:'Белсенді тыңдау (active listening) дегеніміз не?', opts:['А) Дыбысты қатты қою','Б) Тек есту','В) Зейін қойып, түсінуге тырысып, кері байланыс беру','Г) Жазып алу'], ok:2, law:'Белсенді тыңдау — сөйлеушіге толық зейін аудару, сұрақ қою, мазмұнды түсінуге тырысу дағдысы.'},
+          {pts:40, q:'Команда жұмысында "конструктивті сын" қалай беріледі?', opts:['А) Ашық айыптау арқылы','Б) Нақты мысалмен, жақсарту жолын ұсына отырып','В) Жеке сезімдерге тиіп','Г) Басқалардың алдында сынау арқылы'], ok:1, law:'Конструктивті сын — нақты, мысалға сүйенген, жақсарту жолын ұсынатын және сыйластықпен берілген кері байланыс.'},
         ]
       },
     ]
   },
   {
-    id:'zan', emoji:'⚖️', name:'Заң және тәртіп', color:'cat-2',
+    id:'zan', icon:'gavel', iconColor:'#fcd34d', name:'Заң және тәртіп', color:'cat-2',
     subs:[
       {
-        id:'otbasy', emoji:'👪', name:'Отбасы',
+        id:'otbasy', icon:'family_restroom', iconColor:'#f9a8d4', name:'Отбасы',
         qs:[
           {pts:10, q:'Неке қию үшін ең төменгі жас қандай?', opts:['А) 16 жас','Б) 17 жас','В) 18 жас','Г) 21 жас'], ok:2, law:'"Неке және отбасы" кодексі 10-бап: Неке жасы — 18.'},
           {pts:20, q:'Ата-анасы ажырасқан кезде баланың тұрғылықты жерін кім анықтайды?', opts:['А) Тек ана','Б) Тек әке','В) Сот баланың мүддесін ескере отырып','Г) Бала өзі таңдайды'], ok:2, law:'Неке кодексі 75-бап: Сот баланың мүддесін ескереді.'},
@@ -991,7 +1013,7 @@ const CATS = [
         ]
       },
       {
-        id:'qogam', emoji:'🏛', name:'Қоғам',
+        id:'qogam', icon:'account_balance', iconColor:'#fbbf24', name:'Қоғам',
         qs:[
           {pts:10, q:'ҚР Конституциясы қашан қабылданды?', opts:['А) 1991 жылы','Б) 1993 жылы','В) 1995 жылы','Г) 2000 жылы'], ok:2, law:'ҚР Конституциясы 1995 жылы 30 тамызда референдумда қабылданды.'},
           {pts:20, q:'Сайлауға қатысу құқығы қанша жастан басталады?', opts:['А) 16 жас','Б) 18 жас','В) 21 жас','Г) 25 жас'], ok:1, law:'Конституция 33-бап: 18 жастан бастап белсенді сайлау құқығы.'},
@@ -1000,9 +1022,9 @@ const CATS = [
         ]
       },
       {
-        id:'hukuk', emoji:'📜', name:'Азаматтық құқық',
+        id:'hukuk', icon:'description', iconColor:'#a78bfa', name:'Азаматтық құқық',
         qs:[
-          {pts:10, q:'Кәмелетке толмаған адам ресми жұмысқа орналаса ала ма?', opts:['А) Жоқ, мүлдем жұмыс жасай алмайды','Б) 14 жастан бастап ата-анасының рұқсатымен','В) 16 жастан бастап', 'Г) 18 жастан бастап ғана'], ok:1, law:'ҚР Еңбек кодексі 30-бап: 14 жастан ата-аналар келісімімен.'},
+          {pts:10, q:'Кәмелетке толмаған адам ресми жұмысқа орналаса ала ма?', opts:['А) Жоқ, мүлдем жұмыс жасай алмайды','Б) 14 жастан бастап ата-анасының рұқсатымен','В) 16 жастан бастап','Г) 18 жастан бастап ғана'], ok:1, law:'ҚР Еңбек кодексі 30-бап: 14 жастан ата-аналар келісімімен.'},
           {pts:20, q:'Ақша қарызын кімге өндіріп алуға болады?', opts:['А) Борышкердің кез келген туысқанынан','Б) Тек борышкердің өзінен','В) Кепілгерден де болады','Г) Ешкімнен өндіріп алуға болмайды'], ok:2, law:'ҚР АК 329-бап: Кепілгер борышкермен бірге жауаптылықта болады.'},
           {pts:30, q:'Мүліктік дауларда талап қою мерзімі неше жыл?', opts:['А) 1 жыл','Б) 2 жыл','В) 3 жыл','Г) 5 жыл'], ok:2, law:'ҚР АК 177-бап: Жалпы талап қою мерзімі — 3 жыл.'},
           {pts:40, q:'Тұтынушы сатып алынған тауардан бас тарта алатын мерзім қанша күн?', opts:['А) 3 күн','Б) 7 күн','В) 14 күн','Г) 30 күн'], ok:2, law:'"Тұтынушылардың құқықтарын қорғау туралы" Заң 29-бап: 14 күн ішінде.'},
@@ -1011,10 +1033,10 @@ const CATS = [
     ]
   },
   {
-    id:'oylan', emoji:'🧠', name:'Ойлан-тап', color:'cat-3',
+    id:'oylan', icon:'psychology', iconColor:'#c084fc', name:'Ойлан-тап', color:'cat-3',
     subs:[
       {
-        id:'jumbaq', emoji:'🔮', name:'Жұмбақтар',
+        id:'jumbaq', icon:'auto_fix_high', iconColor:'#e879f9', name:'Жұмбақтар',
         qs:[
           {pts:10, q:'Суға салсаң батпайды, отқа салсаң жанбайды, жерге салсаң шіримейді — бұл не?', opts:['А) Алтын','Б) Мұз','В) Тас','Г) Темір'], ok:0, law:'Жауап: Алтын — суда батпайтын, отта жанбайтын (ерісе де) асыл металл.'},
           {pts:20, q:'Таңертең төрт аяқты, түсте екі аяқты, кешке үш аяқты — бұл не?', opts:['А) Жылқы','Б) Адам','В) Ит','Г) Тасбақа'], ok:1, law:'Классикалық жұмбақ: Адам — бала кезінде төрт аяқты, ересек екі аяқты, кәрілікте таяқпен үш аяқты.'},
@@ -1023,7 +1045,7 @@ const CATS = [
         ]
       },
       {
-        id:'logika', emoji:'🔢', name:'Логика',
+        id:'logika', icon:'extension', iconColor:'#22d3ee', name:'Логика',
         qs:[
           {pts:10, q:'5 + 3 × 2 = ?', opts:['А) 16','Б) 11','В) 10','Г) 13'], ok:1, law:'Математика ережесі: алдымен көбейту: 3×2=6, содан соң 5+6=11.'},
           {pts:20, q:'Егер барлық мысықтар жануар болса, кейбір жануарлар ақ болса, онда...', opts:['А) Барлық мысықтар ақ','Б) Кейбір мысықтар ақ болуы мүмкін','В) Ешбір мысық ақ емес','Г) Барлық ақтар мысық'], ok:1, law:'Логика: мүмкіндік пен міндеттілікті ажырату керек.'},
@@ -1032,44 +1054,12 @@ const CATS = [
         ]
       },
       {
-        id:'tapqyr', emoji:'💡', name:'Тапқырлық',
+        id:'tapqyr', icon:'lightbulb', iconColor:'#fde047', name:'Тапқырлық',
         qs:[
           {pts:10, q:'Желдеткіш бір минутта 600 айналым жасаса, 10 секундта неше айналым жасайды?', opts:['А) 60','Б) 100','В) 10','Г) 50'], ok:1, law:'600 ÷ 60 × 10 = 100 айналым.'},
           {pts:20, q:'Қайсы сан квадраттаса да, кубқа да шықса да нөл болады?', opts:['А) 1','Б) -1','В) 0','Г) 10'], ok:2, law:'0² = 0, 0³ = 0 — нөлдің кез келген дәрежесі нөл.'},
           {pts:30, q:'Кесте үстінде 3 алма бар, 1-ін алдық. Неше қалды?', opts:['А) 2','Б) 3','В) 1','Г) 0'], ok:0, law:'Тапқырлық: 3 алманың 1-ін алдық дегеніміз 1 бізде, 2 кестеде қалды — жауап 2.'},
-          {pts:40, q:'Маман 5 машинаны 5 минутта жөндесе, 100 машинаны қанша уақытта жөндейді?', opts:['А) 100 минут','Б) 500 минут','В) 5 минут','Г) 20 минут'], ok:0, law:'Тапқырлық: 1 маман 1 машинаны 5 минутта жөндейді. Параллель жұмыс емес — 100 машина = 100 × 5 = 500 минут… Бірақ 1 маман болса: 100 минут дұрыс жауап — 100 машина × 1 минут/маш.'},
-        ]
-      },
-    ]
-  },
-  {
-    id:'qazaq', emoji:'🇰🇿', name:'Қазақстан', color:'cat-4',
-    subs:[
-      {
-        id:'tarix', emoji:'📖', name:'Тарих',
-        qs:[
-          {pts:10, q:'Қазақстан тәуелсіздігін қашан жариялады?', opts:['А) 1990 жылы','Б) 1991 жылы 16 желтоқсан','В) 1992 жылы','Г) 1995 жылы'], ok:1, law:'1991 жылы 16 желтоқсанда ҚР тәуелсіздігі жарияланды — Тәуелсіздік күні.'},
-          {pts:20, q:'Қазақ хандығы қай жылы құрылды?', opts:['А) 1456 жылы','Б) 1465 жылы','В) 1480 жылы','Г) 1500 жылы'], ok:1, law:'Қазақ хандығы 1465 жылы Керей мен Жәнібек хандар тұсында құрылды.'},
-          {pts:30, q:'Қазақстанның алғашқы астанасы қай қала болды?', opts:['А) Алматы','Б) Семей','В) Орынбор','Г) Ташкент'], ok:0, law:'Кеңес дәуірінде және тәуелсіздік алғаннан кейін 1997 жылға дейін Алматы астана болды.'},
-          {pts:40, q:'Абылай хан қай жылдары билік жүргізді?', opts:['А) 1711–1781','Б) 1693–1748','В) 1731–1781','Г) 1748–1780'], ok:0, law:'Абылай хан 1711 жылы туылып, 1781 жылы қайтыс болды; хан болған жылы — 1771.'},
-        ]
-      },
-      {
-        id:'madeni', emoji:'🎨', name:'Мәдениет',
-        qs:[
-          {pts:10, q:'Абай Құнанбаевтың "Қара сөздері" неше сөзден тұрады?', opts:['А) 25','Б) 37','В) 45','Г) 50'], ok:1, law:'Абайдың "Қара сөздері" — 37 қара сөзден тұратын философиялық шығарма.'},
-          {pts:20, q:'"Манас" эпосы қай халықтың ауыз әдебиеті ескерткіші?', opts:['А) Қазақ','Б) Қырғыз','В) Өзбек','Г) Ұйғыр'], ok:1, law:'"Манас" — қырғыз халқының эпосы, дүниежүзіндегі ең ұзын эпостардың бірі.'},
-          {pts:30, q:'Қазақтың ұлттық аспабы домбыраның неше ішегі бар?', opts:['А) 1 ішек','Б) 2 ішек','В) 3 ішек','Г) 4 ішек'], ok:1, law:'Домбыра — дәстүрлі 2 ішекті қазақ аспабы.'},
-          {pts:40, q:'Қазақстандық алғашқы ғарышкер кім?', opts:['А) Айдын Аимбетов','Б) Тоқтар Әубәкіров','В) Ахтам Шаріпов','Г) Мұхтар Мұсабаев'], ok:1, law:'Тоқтар Әубәкіров 1991 жылы "Союз ТМ-13" кемесімен ғарышқа ұшты — тәуелсіз Қазақстаннан тұңғыш ғарышкер.'},
-        ]
-      },
-      {
-        id:'tabigat', emoji:'🌿', name:'Табиғат',
-        qs:[
-          {pts:10, q:'Қазақстанның ең үлкен көлі қайсы?', opts:['А) Балқаш','Б) Арал','В) Зайсан','Г) Алакөл'], ok:0, law:'Балқаш — 18 300 шаршы километрмен Қазақстанның ең үлкен көлі.'},
-          {pts:20, q:'Қазақстанда неше табиғи климаттық белдеу бар?', opts:['А) 3','Б) 4','В) 5','Г) 6'], ok:2, law:'Қазақстанда 5 климаттық белдеу бар: орман-дала, дала, шөл, шөлейт, тау.'},
-          {pts:30, q:'Арал теңізінің тартылуының басты себебі не?', opts:['А) Климаттың жылынуы','Б) Су алу үшін өзендердің бұрылуы','В) Жер сілкінісі','Г) Теңіз суының буланып кетуі'], ok:1, law:'Амударья мен Сырдарядан суармалы егіндік үшін су алу нәтижесінде Арал тартылды.'},
-          {pts:40, q:'Қазақстандағы ең сирек кездесетін жануар — қандай?', opts:['А) Қасқыр','Б) Барыс','В) Арқар','Г) Сайғақ'], ok:1, law:'Барыс (ілбіс) — ҚР Қызыл кітабына енген, саны өте аз сирек жануар.'},
+          {pts:40, q:'Маман 5 машинаны 5 минутта жөндесе, 100 машинаны қанша уақытта жөндейді?', opts:['А) 100 минут','Б) 500 минут','В) 5 минут','Г) 20 минут'], ok:0, law:'Тапқырлық: 1 маман 1 машинаны 5 минутта жөндейді. 100 машина × 1 мин = 100 минут.'},
         ]
       },
     ]
@@ -1139,7 +1129,7 @@ function initPhone(){
   function renderMems(){
     mList.innerHTML = members.map((m,i)=>`
       <div class="mem-item">
-        <div class="mem-left"><span class="mem-icon">👤</span>${esc(m)}</div>
+        <div class="mem-left"><i class="ms-sm" style="color:rgba(245,200,66,.7)">person</i>${esc(m)}</div>
         <div class="rm-mem" onclick="rmM(${i})">✕</div>
       </div>
     `).join('');
@@ -1222,7 +1212,7 @@ function initMain(){
           <span class="tc-num">${i+1}</span>
           <span class="tc-name">${esc(t.name)}</span>
         </div>
-        ${t.members.map(m=>`<div class="tc-member"><span class="tc-icon">👤</span>${esc(m)}</div>`).join('')}
+        ${t.members.map(m=>`<div class="tc-member"><i class="ms-sm" style="color:rgba(255,255,255,.4)">person</i>${esc(m)}</div>`).join('')}
       </div>
     `).join('');
   }
@@ -1247,14 +1237,22 @@ function initMain(){
       cnt++; if(cnt<total){ delay=Math.min(delay+14,380); setTimeout(spin_,delay); }
       else {
         drawIdx = Math.floor(Math.random()*list.length);
-        const winner = list[drawIdx].name;
+        const ordered = [...list.slice(drawIdx), ...list.slice(0, drawIdx)];
         spin.style.display='none';
-        sub.textContent='🎉 Бірінші ойнайтын команда:';
-        rev.textContent='🏆 '+winner; rev.style.display='block';
+        sub.textContent='Ойын ретімен:';
+        rev.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px;text-align:left;">` +
+          ordered.map((t,i)=>`
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);">
+              <span style="background:rgba(245,200,66,.15);border:2px solid rgba(245,200,66,.4);color:#f5c842;border-radius:50%;width:34px;height:34px;min-width:34px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.9rem;">${i+1}</span>
+              <span style="color:#fff;font-weight:700;font-size:1.1rem;">${esc(t.name)}</span>
+            </div>`).join('') + `</div>`;
+        rev.style.cssText='display:block;padding:16px 24px;font-size:1rem;min-width:320px;';
         ok.style.display='inline-block'; drawDone=true;
         SND.drawReveal();
         $('drawResult').classList.add('show');
-        $('drWinner').textContent='🏆 Бірінші: '+winner;
+        $('drWinner').innerHTML = ordered.map((t,i)=>
+          `<span style="display:inline-flex;align-items:center;gap:5px;opacity:${1-i*0.12};"><span style="background:rgba(245,200,66,.2);border:1.5px solid rgba(245,200,66,.4);color:#f5c842;border-radius:50%;width:22px;height:22px;min-width:22px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:.72rem;">${i+1}</span><span style="font-size:${1-i*0.05}rem;font-weight:700;">${esc(t.name)}</span></span>`
+        ).join('<span style="color:rgba(255,255,255,.25);margin:0 4px;">→</span>');
         $('startBtn').style.display='inline-flex';
         launchConfetti();
       }
@@ -1310,7 +1308,9 @@ function runGame(teamList){
       return `
         <div class="cat-card ${cat.color}" onclick="selectCat(${ci})">
           <div class="cat-card-inner">
-            <span class="cat-emoji">${cat.emoji}</span>
+            <div class="cat-icon-wrap">
+              <i class="ms" style="color:${cat.iconColor}">${cat.icon}</i>
+            </div>
             <div class="cat-title-text">${cat.name}</div>
             <div class="cat-sub-count">${cat.subs.length} бөлім • ${usedQ}/${totalQ}</div>
           </div>
@@ -1324,10 +1324,9 @@ function runGame(teamList){
   }
 
   window.selectCat = (ci)=>{
-    SND.click();
-    curCatIdx = ci;
+    SND.click(); curCatIdx = ci;
     const cat = CATS[ci];
-    $('subEmoji').textContent  = cat.emoji;
+    $('subEmoji').innerHTML = `<i class="ms-sm" style="color:${cat.iconColor}">${cat.icon}</i>`;
     $('subTitle').textContent  = cat.name;
     renderSubcats(ci);
     showSubs();
@@ -1343,20 +1342,21 @@ function runGame(teamList){
       const done  = sub.qs.filter(q=>used[cat.id+sub.id+q.pts]).length;
       return `
         <div class="subcat-card" onclick="selectSub(${ci},${si})">
-          <span class="subcat-icon">${sub.emoji}</span>
+          <div class="subcat-icon-wrap">
+            <i class="ms" style="color:${sub.iconColor}">${sub.icon}</i>
+          </div>
           <div class="subcat-name">${sub.name}</div>
           <div class="subcat-pts">10 · 20 · 30 · 40 балл</div>
-          ${done>0?`<div class="subcat-done">✓ ${done}/${total} жауапталды</div>`:''}
+          ${done>0?`<div class="subcat-done"><i class="ms-sm" style="color:#4ade80">check_circle</i> ${done}/${total} жауапталды</div>`:''}
         </div>`;
     }).join('');
   }
 
   window.selectSub = (ci,si)=>{
-    SND.click();
-    curSubIdx = si;
+    SND.click(); curSubIdx = si;
     const cat = CATS[ci];
     const sub = cat.subs[si];
-    $('qlistTitle').textContent = sub.emoji+' '+sub.name;
+    $('qlistTitle').innerHTML = `<i class="ms-sm" style="color:${sub.iconColor}">${sub.icon}</i> ${sub.name}`;
     renderQCards(ci,si);
     showQs();
   };
@@ -1389,7 +1389,7 @@ function runGame(teamList){
     if(used[key])return;
     curQ = {catId,subId,qi,key,q};
 
-    $('qmCat').textContent = cat.emoji+' '+cat.name+' › '+sub.emoji+' '+sub.name+' · '+q.pts+' балл';
+    $('qmCat').innerHTML = `<i class="ms-sm" style="color:${cat.iconColor}">${cat.icon}</i> ${cat.name} › <i class="ms-sm" style="color:${sub.iconColor}">${sub.icon}</i> ${sub.name} · <strong>${q.pts} балл</strong>`;
     $('qBody').textContent = q.q;
     $('lawBox').textContent = q.law;
     $('lawBox').classList.remove('on');
@@ -1509,11 +1509,11 @@ function runGame(teamList){
     }).join('')+'</div>';
     $('gameWrap').innerHTML=`<div class="finish-wrap">
       <div class="fin-title">ОЙЫН АЯҚТАЛДЫ!</div>
-      <div class="fin-medal">🏆</div>
+      <i class="ms" style="color:#f5c842;font-size:6rem;margin:16px 0">emoji_events</i>
       ${medals}
-      <h3 style="color:var(--gold);margin-top:20px">📊 Толық статистика</h3>
+      <h3 style="color:var(--gold);margin-top:20px"><i class="ms-sm" style="color:#60a5fa">bar_chart</i> Толық статистика</h3>
       ${stats}
-      <button class="restart-btn" onclick="location.reload()">↺ Қайта ойнау</button>
+      <button class="restart-btn" onclick="location.reload()"><i class="ms-sm">refresh</i> Қайта ойнау</button>
     </div>`;
     launchConfetti(); SND.finish();
   }
@@ -1525,113 +1525,60 @@ function runGame(teamList){
 }
 
 // ════════════════════════════════════════════
-//  SOUND ENGINE (Web Audio API — no files needed)
+//  CONFETTI
+// ════════════════════════════════════════════
+
+// ════════════════════════════════════════════
+//  SOUND ENGINE (Web Audio API — no files)
 // ════════════════════════════════════════════
 const SND = (()=>{
-  let ctx = null;
-  let tickInt = null;
-
-  function getCtx(){
-    if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-    return ctx;
+  let ctx=null, tickInt=null;
+  function ac(){ if(!ctx) ctx=new(window.AudioContext||window.webkitAudioContext)(); return ctx; }
+  function tone(freq,type,dur,vol=0.35,t0=0,endF=null){
+    const a=ac(), t=a.currentTime+t0;
+    const o=a.createOscillator(), g=a.createGain();
+    o.connect(g); g.connect(a.destination);
+    o.type=type; o.frequency.setValueAtTime(freq,t);
+    if(endF) o.frequency.linearRampToValueAtTime(endF,t+dur);
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(vol,t+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+    o.start(t); o.stop(t+dur);
   }
-
-  function playTone(freq, type, duration, volume=0.4, startTime=0, endFreq=null){
-    const ac = getCtx();
-    const t  = ac.currentTime + startTime;
-    const osc = ac.createOscillator();
-    const gain = ac.createGain();
-    osc.connect(gain); gain.connect(ac.destination);
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, t);
-    if(endFreq) osc.frequency.linearRampToValueAtTime(endFreq, t+duration);
-    gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(volume, t+0.01);
-    gain.gain.exponentialRampToValueAtTime(0.001, t+duration);
-    osc.start(t); osc.stop(t+duration);
-  }
-
-  // Single tick — dry, short
   function tick(){
-    const ac = getCtx();
-    const t  = ac.currentTime;
-    const buf = ac.createBuffer(1, ac.sampleRate*0.04, ac.sampleRate);
-    const d = buf.getChannelData(0);
-    for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1) * Math.exp(-i/(ac.sampleRate*0.008));
-    const src = ac.createBufferSource();
-    const gain = ac.createGain();
-    const filter = ac.createBiquadFilter();
-    filter.type = 'bandpass'; filter.frequency.value = 1800; filter.Q.value = 3;
-    src.buffer = buf;
-    src.connect(filter); filter.connect(gain); gain.connect(ac.destination);
-    gain.gain.setValueAtTime(0.35, t);
-    src.start(t);
+    const a=ac(), t=a.currentTime;
+    const buf=a.createBuffer(1,a.sampleRate*0.04,a.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.exp(-i/(a.sampleRate*0.007));
+    const s=a.createBufferSource(), g=a.createGain(), f=a.createBiquadFilter();
+    f.type='bandpass'; f.frequency.value=2000; f.Q.value=4;
+    s.buffer=buf; s.connect(f); f.connect(g); g.connect(a.destination);
+    g.gain.setValueAtTime(0.3,t); s.start(t);
   }
-
   return {
-    // Тикание часов — запускается пока открыт вопрос
-    startTicking(){
-      SND.stopTicking();
-      tick(); // первый сразу
-      tickInt = setInterval(tick, 1000);
-    },
-    stopTicking(){
-      if(tickInt){ clearInterval(tickInt); tickInt=null; }
-    },
-
-    // Вопрос открылся — короткий "вжух" + начало тикания
+    startTicking(){ SND.stopTicking(); tick(); tickInt=setInterval(tick,1000); },
+    stopTicking(){ if(tickInt){clearInterval(tickInt);tickInt=null;} },
     questionOpen(){
-      playTone(440, 'sine', 0.12, 0.3);
-      playTone(660, 'sine', 0.1, 0.2, 0.1);
-      setTimeout(()=>SND.startTicking(), 300);
+      tone(440,'sine',0.1,0.25); tone(660,'sine',0.08,0.18,0.1);
+      setTimeout(()=>SND.startTicking(),250);
     },
-
-    // Правильный ответ — саксофонные ноты (восходящая фраза)
     correct(){
       SND.stopTicking();
-      const notes = [
-        [466,0],[523,0.12],[587,0.24],[698,0.36],[784,0.52],[880,0.68]
-      ];
-      notes.forEach(([f,s])=>playTone(f,'sawtooth',0.22,0.22,s));
-      // Финальный аккорд
-      [523,659,784].forEach(f=>playTone(f,'sawtooth',0.45,0.15,0.82));
+      [466,523,587,698,784,880].forEach((f,i)=>tone(f,'sawtooth',0.2,0.2,i*0.11));
+      [523,659,784].forEach(f=>tone(f,'sawtooth',0.4,0.14,0.75));
     },
-
-    // Неправильный ответ — нисходящий "ошибочный" звук
     wrong(){
       SND.stopTicking();
-      playTone(330,'square',0.12,0.3);
-      playTone(280,'square',0.12,0.3,0.12);
-      playTone(220,'square',0.22,0.35,0.25, 160);
+      tone(330,'square',0.1,0.28); tone(270,'square',0.1,0.28,0.12); tone(200,'square',0.22,0.32,0.25,150);
     },
-
-    // Время вышло — сирена
     timeout(){
       SND.stopTicking();
-      for(let i=0;i<3;i++){
-        playTone(880,'sawtooth',0.15,0.25, i*0.25, 440);
-      }
+      for(let i=0;i<3;i++) tone(880,'sawtooth',0.14,0.22,i*0.23,440);
     },
-
-    // Жеребьевка — барабанная дробь + финал
-    drawSpin(name){
-      playTone(200+Math.random()*100,'triangle',0.04,0.18);
-    },
-    drawReveal(){
-      [262,330,392,523].forEach((f,i)=>playTone(f,'sine',0.18,0.3,i*0.1));
-      playTone(523,'sine',0.4,0.4,0.45);
-    },
-
-    // Конфетти / финал
-    finish(){
-      const melody = [523,659,784,1047,784,659,784,1047];
-      melody.forEach((f,i)=>playTone(f,'sine',0.22,0.3,i*0.13));
-    },
-
-    // Кнопка
-    click(){
-      playTone(600,'sine',0.06,0.2);
-    }
+    drawSpin(){ tone(200+Math.random()*120,'triangle',0.04,0.15); },
+    drawReveal(){ [262,330,392,523].forEach((f,i)=>tone(f,'sine',0.18,0.28,i*0.1)); tone(523,'sine',0.5,0.38,0.5); },
+    finish(){ [523,659,784,1047,784,659,784,1047].forEach((f,i)=>tone(f,'sine',0.2,0.28,i*0.13)); },
+    click(){ tone(600,'sine',0.05,0.18); }
   };
 })();
 
