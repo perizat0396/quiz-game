@@ -1477,7 +1477,7 @@ function runGame(teamList){
     // Check all done
     const totalQ=CATS.reduce((a,c)=>a+c.subs.reduce((b,s)=>b+s.qs.length,0),0);
     if(Object.keys(used).length>=totalQ) showFinish();
-    else setMsg(`${teams[curTeam].name} — категория таңда! 🎯`);
+    else setMsg(`Категория таңдаңыз! 🎯`);
   };
 
   function setMsg(t){$('gMsg').textContent=t;}
@@ -1609,3 +1609,4 @@ function launchConfetti(){
 </script>
 </body>
 </html>
+
