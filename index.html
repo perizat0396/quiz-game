@@ -134,18 +134,8 @@ body{min-height:100vh;background:var(--bg);color:#fff;overflow-x:hidden}
 .q-card.type-normal{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.11)}
 .q-card.type-normal:hover:not(.q-used){background:rgba(245,200,66,.09);border-color:var(--gold);transform:translateY(-4px);box-shadow:0 0 0 2px rgba(245,200,66,.4),0 10px 24px rgba(245,200,66,.2)}
 /* Game */
-.q-card.type-game{
-  background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(16,185,129,.06));
-  border-color:rgba(34,197,94,.4);
-  position:relative;overflow:hidden;
-}
-.q-card.type-game::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent,rgba(34,197,94,.09),transparent);
-  animation:shimG 2.2s ease-in-out infinite;
-}
-@keyframes shimG{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-.q-card.type-game:hover:not(.q-used){background:rgba(34,197,94,.18);border-color:var(--green);transform:translateY(-4px);box-shadow:0 0 0 2px rgba(34,197,94,.45),0 10px 24px rgba(34,197,94,.25)}
+.q-card.type-game{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.11)}
+.q-card.type-game:hover:not(.q-used){background:rgba(245,200,66,.09);border-color:var(--gold);transform:translateY(-4px);box-shadow:0 0 0 2px rgba(245,200,66,.4),0 10px 24px rgba(245,200,66,.2)}
 /* Video */
 .q-card.type-video{
   background:linear-gradient(135deg,rgba(168,85,247,.12),rgba(236,72,153,.07));
@@ -409,8 +399,7 @@ body{min-height:100vh;background:var(--bg);color:#fff;overflow-x:hidden}
     </div>
     <div class="badges">
       <span class="badge"><span class="mi" style="font-size:1rem;margin-right:2px">groups</span><span id="mainCount">0 команда</span></span>
-      <span class="badge b2"><span class="mi" style="font-size:1rem">videocam</span> AI-бейне</span>
-      <span class="badge b3"><span class="mi" style="font-size:1rem">sports_esports</span> Мини-ойын</span>
+
     </div>
   </div>
 
@@ -989,7 +978,7 @@ function runGame(teamList){
       const k=cat.id+sub.id+q.pts,done=!!used[k];
       const tp=q.type||'normal';
       return `<div class="q-card type-${tp} ${done?'q-used':''}" ${done?'':`onclick="openQ('${cat.id}','${sub.id}',${realQi})"`}>
-        <span style="font-size:1.4rem">${done?'✅':tp==='game'?'🎮':'❓'}</span>
+        <span style="font-size:1.4rem">${done?'✅':'❓'}</span>
         <span class="q-pts">${q.pts}</span>
         <span class="q-pts-lbl">балл</span>
       </div>`;
