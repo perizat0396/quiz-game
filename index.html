@@ -35,6 +35,52 @@
 body{min-height:100vh;background:var(--bg);color:#fff;overflow-x:hidden}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
 
+
+/* ═══ PSYCH DECODER GAME ═══ */
+.pd-stage-lbl{text-align:center;font-size:.75rem;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.35);margin-bottom:14px;text-transform:uppercase}
+.pd-stage-title{text-align:center;font-size:1.15rem;font-weight:900;color:var(--gold);margin-bottom:4px;font-family:'Orbitron',sans-serif}
+.pd-stage-sub{text-align:center;color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:18px}
+.pd-penalty{text-align:center;color:#f87171;font-weight:800;font-size:.85rem;margin-bottom:10px;min-height:20px}
+/* Character + clouds */
+.pd-scene{position:relative;display:flex;justify-content:center;align-items:center;min-height:220px;margin-bottom:18px}
+.pd-student{width:72px;height:72px;border-radius:50%;background:linear-gradient(145deg,#2d1f50,#1a0f30);border:3px solid rgba(168,85,247,.4);display:flex;align-items:center;justify-content:center;font-size:2.5rem;position:relative;z-index:2;transition:.5s;flex-shrink:0}
+.pd-student.happy{background:linear-gradient(145deg,#14532d,#166534);border-color:rgba(34,197,94,.5)}
+.pd-clouds{position:absolute;inset:0;pointer-events:none}
+.pd-cloud{position:absolute;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:9px 12px;font-size:.72rem;color:rgba(255,255,255,.7);line-height:1.4;max-width:150px;transition:.3s;animation:cloudIn .4s ease both}
+@keyframes cloudIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.pd-cloud:nth-child(1){top:0;left:0}
+.pd-cloud:nth-child(2){top:0;right:0}
+.pd-cloud:nth-child(3){bottom:0;left:0}
+.pd-cloud:nth-child(4){bottom:0;right:0}
+/* Masks */
+.pd-masks{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.pd-mask{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 16px;cursor:pointer;font-weight:700;font-size:.92rem;color:#fff;transition:.18s;display:flex;align-items:center;gap:10px}
+.pd-mask:hover:not(.disabled){background:rgba(245,200,66,.09);border-color:var(--gold);transform:translateX(3px)}
+.pd-mask.disabled{pointer-events:none;opacity:.5}
+.pd-mask.wrong-mask{border-color:#ef4444;background:rgba(239,68,68,.1);animation:shake .35s ease}
+.pd-mask.correct-mask{border-color:#22c55e;background:rgba(34,197,94,.12)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pd-mask-icon{font-size:1.4rem;min-width:30px;text-align:center}
+/* Feedback bubble */
+.pd-feedback{border-radius:12px;padding:12px 15px;font-size:.83rem;line-height:1.5;margin-bottom:14px;display:none}
+.pd-feedback.show{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.pd-feedback.bad{background:rgba(239,68,68,.1);border-left:4px solid #ef4444;color:#fca5a5}
+.pd-feedback.good{background:rgba(34,197,94,.1);border-left:4px solid #22c55e;color:#4ade80}
+.pd-retry{background:rgba(245,200,66,.12);border:1.5px solid rgba(245,200,66,.3);color:var(--gold);border-radius:50px;padding:9px 22px;font-weight:800;font-size:.85rem;cursor:pointer;transition:.18s;margin-bottom:14px;display:none}
+.pd-retry:hover{background:rgba(245,200,66,.2)}
+/* Stage 2 blocks */
+.pd-blocks{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.pd-block{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 16px;cursor:pointer;font-size:.88rem;color:rgba(255,255,255,.85);line-height:1.5;transition:.18s;display:flex;align-items:center;gap:10px}
+.pd-block:hover:not(.disabled){background:rgba(245,200,66,.08);border-color:rgba(245,200,66,.4);transform:translateX(3px)}
+.pd-block.disabled{pointer-events:none}
+.pd-block.selected-block{border-color:#22c55e;background:rgba(34,197,94,.1)}
+.pd-block.wrong-block{border-color:#ef4444;background:rgba(239,68,68,.1);animation:shake .35s ease}
+.pd-block-id{background:rgba(255,255,255,.1);border-radius:8px;width:26px;height:26px;min-width:26px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;color:var(--gold)}
+.pd-select-hint{text-align:center;color:rgba(255,255,255,.4);font-size:.78rem;margin-bottom:10px}
+.pd-progress-bar{height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-bottom:18px}
+.pd-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),#22c55e);border-radius:3px;transition:.4s}
+
 /* ─── MAIN ─── */
 #mainScreen{min-height:100vh;display:flex;flex-direction:column;padding:20px;max-width:1380px;margin:0 auto;gap:20px}
 .topbar{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#0f1629,#1a2040);border:1.5px solid rgba(245,200,66,.22);border-radius:var(--r);padding:16px 26px;gap:14px;flex-wrap:wrap}
@@ -602,9 +648,9 @@ const CATS = [
   subs:[
    {id:'cifr',emoji:'💻',icon:'computer',ic:'#93c5fd',name:'Цифрландыру',
     qs:[
-      {pts:10,q:'Цифрлық экономика дегеніміз не?',opts:['Тек электронды сауда','Деректер мен цифрлық технологияларға негізделген экономика','Банктің онлайн жүйесі','Интернет-дүкен'],ok:1,law:'Цифрлық экономика — деректерді, алгоритмдерді және цифрлық технологияларды пайдаланатын экономикалық қызмет жүйесі.'},
-      {pts:20,q:'Электрондық үкімет (e-gov) не үшін қолданылады?',opts:['Тек интернет-банкинг','Мемлекеттік қызметтерді онлайн ұсыну','Тек онлайн сауда','Ойын платформасы'],ok:1,law:'Электрондық үкімет — мемлекеттік қызметтерді цифрлық арналар арқылы жеткізу жүйесі.'},
-      {pts:30,q:'Жасанды интеллект (AI) термині алғаш қай жылы енгізілді?',opts:['1950','1956','1969','1980'],ok:1,law:'1956 жылы Джон Маккарти "Жасанды интеллект" терминін ғылыми конференцияда алғаш ресми қолданды.'},
+      {pts:10,q:'Ctrl + Z перне тіркесімі қандай қызмет атқарады?',opts:['Соңғы жасалған әрекетті болдырмау және алдыңғы күйге қайтару қызметі','Таңдалған мәтінді автоматты түрде сақтау функциясын іске қосады','Құжаттағы барлық мәтінді белгілеу және көшіру әрекетін орындайды','Құжатты басып шығару терезесін жылдам ашу қызметін атқарады'],ok:0,law:'Ctrl + Z — соңғы жасалған әрекетті болдырмайды (Undo).'},
+      {pts:20,q:'Интернеттегі «cookie» файлдарының негізгі қызметі қандай?',opts:['Компьютердің жедел жадын тазарту және жүйені жылдамдату қызметі','Пайдаланушы әрекеттерін есте сақтап, сайт тәжірибесін бейімдеу механизмі','Вирустардан қорғауға арналған қауіпсіздік бағдарламасының бөлігі','Интернетке қосылу жылдамдығын тұрақтандыруға арналған жүйе'],ok:1,law:'Cookie файлдары — пайдаланушы деректерін браузерде сақтап, сайт жұмысын жеке бейімдеуге мүмкіндік береді.'},
+      {pts:30,q:'Неліктен пернетақтадағы әріптер әліпби ретімен орналаспаған?',opts:['Компьютерлік кодтау жүйесіне сәйкестендіру мақсатында өзгертілген','Жиі қолданылатын әріптерді тез теру үшін механикалық тығындарды азайту','Әр тілге бейімдеу процесін жеңілдету үшін орналастырылған','Пернетақта өндірісін арзандату мақсатында өзгертілген'],ok:1,law:'QWERTY пернетақтасы механикалық теру машинасы тығындарын азайту үшін жасалған.'},
       {
        pts:40,type:'game',
        gameIcon:'🔢',
@@ -629,11 +675,10 @@ const CATS = [
     ]},
    {id:'ped',emoji:'📚',icon:'cast_for_education',ic:'#6ee7b7',name:'Педагогика',
     qs:[
-      {pts:10,q:'Педагогика нені зерттейді?',opts:['Медицинаны','Оқыту мен тәрбие беру теориясы мен практикасын','Психологияны','Философияны'],ok:1,law:'Педагогика — оқыту, тәрбие және білім беру үдерістерін зерттейтін ғылым.'},
-      {pts:20,q:'Формативтік бағалау дегеніміз не?',opts:['Жылдық қорытынды баға','Оқу үдерісінде жүргізілетін кері байланыс бағалауы','Сынақ нәтижесі','Рейтинг жүйесі'],ok:1,law:'Формативтік бағалау — оқушының дамуын бақылау мен кері байланыс беру мақсатында үздіксіз жүргізілетін бағалау.'},
-      {pts:30,q:'Дифференциалды оқыту дегеніміз не?',opts:['Барлығын бірдей оқыту','Оқушылардың жеке ерекшеліктеріне сай оқытуды бейімдеу','Топтық жұмыс','Дистанциялық оқыту'],ok:1,law:'Дифференциалды оқыту — әр оқушының қабілеті мен қажеттілігіне қарай оқу мазмұны мен әдісін бейімдеу.'},
+      {pts:10,q:'Саралап оқыту (дифференциация) әдісінің негізгі мақсаты қандай?',opts:['Барлық оқушыларға бірдей тапсырма беріп, білім деңгейін теңестіруді қамтамасыз ету','Оқушылардың қабілет деңгейіне сай тапсырмалар ұсыну арқылы тиімді оқу үдерісін ұйымдастыру','Сабақ уақытын үнемдеу үшін тапсырмаларды тек жылдам орындайтын оқушыларға беру','Бағалауды жеңілдету мақсатында бір ғана тапсырманы бірнеше рет қайталап орындату'],ok:1,law:'Саралап оқыту — әр оқушының қабілеті мен қажеттілігіне қарай оқу мазмұны мен деңгейін бейімдеу.'},
+      {pts:20,q:'Сыни ойлауды дамытуға бағытталған тапсырманың басты ерекшелігі қандай?',opts:['Оқушылардың ақпаратты жаттап алуын тездетіп, есте сақтау қабілетін күшейтуге бағытталуы','Бір ғана дұрыс жауапты талап етіп, білімді нақты және дәл тексеруге негізделуі','Оқушыларды талдау, салыстыру және дәлелдеу арқылы өз пікірін негіздеуге жетелеуі','Сабақ уақытын үнемдеу мақсатында қысқа және нақты жауап беруді талап етуі'],ok:2,law:'Сыни ойлау — ақпаратты талдау, бағалау және дәлелдеу арқылы өз пікірін тұжырымдау дағдысы.'},
       {
-       pts:40,type:'game',
+       pts:30,type:'game',
        gameIcon:'📊',
        gameTitle:'БЛУМ ПИРАМИДАСЫ',
        gameDesc:'Блум таксономиясының 6 деңгейін төменнен жоғары дұрыс ретке қой!',
@@ -645,6 +690,7 @@ const CATS = [
          {emoji:'🏗️',text:'Синтез',order:5},{emoji:'⭐',text:'Бағалау',order:6},
        ]
       },
+      {pts:40,q:'Студенттердің функционалдық сауаттылығын дамыту дегенді практикалық тұрғыдан қалай түсінуге болады?',opts:['Студенттің оқу бағдарламасындағы барлық теориялық терминдер мен анықтамаларды жатқа айтып бере алу қабілетінің жоғары болуы','Студенттің алған білімін өмірлік және кәсіби күтпеген жағдайларда туындаған мәселелерді шешу үшін тиімді пайдалана алу дағдысы','Студенттің емтихан кезінде берілген тест сұрақтарына ең жылдам жауап беріп, жоғары академиялық рейтинг жинай алу көрсеткіші','Студенттің оқытушы берген нұсқаулықтарды ешқандай өзгеріссіз және қосымша сұрақтарсыз бұлжытпай орындауға дайын болуы'],ok:1,law:'Функционалдық сауаттылық — білімді нақты өмірлік жағдайларда тиімді қолдана алу қабілеті.'},
       {pts:50,type:'video',scene:'classroom',
        voiceText:'Мына оқу бөлмесіне қараңыз. Мұғалім сабақ жүргізуде. Оқушылар топтарда жұмыс жасайды. Бұл қандай оқыту әдісі?',
        q:'Оқушылар топтарда бір-бірін оқытатын әдіс қалай аталады?',
@@ -653,23 +699,34 @@ const CATS = [
     ]},
    {id:'soft',emoji:'🤝',icon:'handshake',ic:'#fdba74',name:'Soft-skills',
     qs:[
-      {pts:10,q:'Soft skills (жұмсақ дағдылар) дегеніміз не?',opts:['Техникалық білік','Тұлғааралық қарым-қатынас және мінез-құлық дағдылары','Компьютер дағдылары','Математика білімі'],ok:1,law:'Soft skills — техникалық емес, адамдармен жұмыс жасауға, коммуникацияға, лидерлікке байланысты дағдылар.'},
-      {pts:20,q:'Эмоционалдық интеллект (EQ) нені білдіреді?',opts:['IQ-дан жоғары болу','Өз және басқалардың эмоцияларын түсіну, басқару қабілеті','Жылдам оқу қабілеті','Логикалық ойлау'],ok:1,law:'EQ — өзінің және айналасындағылардың эмоциясын тану, түсіну, басқару және пайдалану қабілеті.'},
-      {pts:30,q:'Белсенді тыңдау (active listening) дегеніміз не?',opts:['Дыбысты қатты қою','Тек есту','Зейін қойып, түсінуге тырысып, кері байланыс беру','Жазып алу'],ok:2,law:'Белсенді тыңдау — сөйлеушіге толық зейін аудару, сұрақ қою, мазмұнды түсінуге тырысу дағдысы.'},
+      {pts:10,q:'Қазіргі заманғы оқытушының «Цифрлық сауаттылығы» (Digital Skills) дегенді ең бірінші кезекте қалай түсінген дұрыс?',opts:['Әлеуметтік желілерде белсенді болу және студенттермен тек мессенджерлер арқылы бейресми байланыс орната алу қабілеті','Компьютердің ішкі құрылысын жетік білу және кез келген техникалық ақауды маман көмегінсіз өз бетінше жөндеу дағдысы','Оқу процесін тиімді ұйымдастыру үшін арнайы білім беру платформаларын, онлайн сервистер мен интерактивті құралдарды еркін қолдану','Сабаққа қажетті барлық ақпаратты интернеттен дайын күйінде тауып, оны ешқандай өңдеусіз студенттерге таратып беру шеберлігі'],ok:2,law:'Цифрлық сауаттылық — оқу процесін тиімді ұйымдастыру үшін цифрлық құралдарды мақсатты пайдалану қабілеті.'},
+      {pts:20,q:'«Кері байланыс бутерброды» (Sandwich Feedback) әдісін қалай дұрыс қолдану керек?',opts:['Алдымен жіберілген барлық қателерді тізіп шығу, соңынан студенттің жақсы қасиеттерін айтып жұбату','Ең алдымен жұмыстың сәтті шыққан тұстарын атап өту, сосын түзетуді қажет ететін тұстарды айту және соңында болашаққа оң болжам білдіру','Сынды барынша жұмсартып, қателерді айтпай өту, тек студенттің жалпы талпынысын мақтау','Бірден қателерді түзету жолдарын бұйрық түрінде беру және студенттің пікірін тыңдамай, келесі тапсырмаға көшу'],ok:1,law:'Sandwich Feedback: оң баға → дамытуды қажет ететін тұс → оң қорытынды. Бұл мотивацияны сақтайды.'},
+      {pts:30,q:'Гарвард университеті мен Стэнфорд зерттеу орталығының мәліметі бойынша, адамның кәсіби табысқа жетуі 85% «Soft Skills» дағдыларына байланысты. Ал қалған 15% табыс қандай дағдылардың еншісінде?',opts:['Digital Skills','Hard Skills','Meta Skills','Self-management'],ok:1,law:'Кәсіби табыстың 85% — Soft Skills, 15% — Hard Skills (техникалық білік) үлесіне тиеді.'},
       {
        pts:40,type:'game',
-       gameIcon:'⚖️',
-       gameTitle:'ЖЕДЕЛ ШЕШІМ',
-       gameDesc:'Soft-skills туралы жағдайлар — ДҰРЫС па БҰРЫС па? Жылдам ойлаңыз!',
-       gameType:'trueFalse',timeLimit:45,
-       law:'Soft-skills дамыту үшін: белсенді тыңдау, конструктивті кері байланыс, эмпатия маңызды.',
-       tfScenarios:[
-         {text:'Белсенді тыңдаушы сөйлеп жатқан адамды үзбейді',answer:true},
-         {text:'EQ жоғары адам ашуланған кезде шешім қабылдайды',answer:false},
-         {text:'Конструктивті сын нақты мысалмен беріледі',answer:true},
-         {text:'Командада жоспар дайын болмаса — жұмыс бастамаған дұрыс',answer:false},
-         {text:'Эмпатия — басқаның сезімін сезіне білу қабілеті',answer:true},
-       ]
+       gameIcon:'🎭',
+       gameTitle:'ПСИХОЛОГИЯЛЫҚ ДЕШИФРАТОР',
+       gameDesc:'2 кезеңді ойын: студенттің «Маскасын» анықтаңыз, содан кейін дұрыс шешім алгоритмін жинаңыз!',
+       gameType:'psychDecoder',timeLimit:90,
+       law:'Студенттің агрессиясы мен дөрекілігі астында «Мен мұны істей алмаймын» деген қорқыныш жасырылуы мүмкін. Дұрыс педагогикалық реакция — қорқынышты сейілту, айыптамау.',
+       behaviors:[
+         'Тапсырманы алғанда бірден: "Бұл маған керек емес, мен мұны бәрібір өмірде қолданбаймын" – деп дөрекі жауап берді',
+         'Көзіне қарасаңыз, зейіні шашыраңқы, парақ бетіне мағынасыз сызықтар сызып, мазасызданып отыр',
+         'Сұрақ қойсаңыз, агрессия танытады немесе "білмеймін" деп қысқа қайырып, одан әрі сөйлесуден қашады',
+         'Өзіне сенімді болып көрінгісі келеді, бірақ топтағы басқа студенттер іске кіріскенде, оларға кедергі жасап, назарын басқа жаққа бұруға тырысады',
+       ],
+       masks:[
+         {text:'Назар аудару',correct:false,feedback:'Қате! Бұл назар аудару емес. Студент өзін көрсетуді емес, қорғануды (қағаз шимайлау, қашу) көздеп тұр.'},
+         {text:'Біліксіздікті жасыру',correct:true,feedback:'Өте жақсы! Сіз студенттің дөрекілігінің артында "Мен мұны істей алмаймын, бірақ мойындауға ұяламын" деген қорқыныш жатқанын таныдыңыз.'},
+         {text:'Күйзеліс',correct:false,feedback:'Қате! Бұл жай ғана шаршау емес. Күйзелісте студент енжар болады, ал бұл жерде ол белсенді агрессия көрсетіп тұр.'},
+       ],
+       blocks:[
+         {id:'A',text:'Мен бұл тапсырманың күрделі екенін білемін, көпшілік мұнда қателесіп жатады, бұл қалыпты жағдай.',correct:true,feedback:null},
+         {id:'B',text:'Егер қазір істемесең, комиссияға барасың, ол жақта сені ешкім аямайды.',correct:false,feedback:'Қате! Қорқыту мидың жұмысын блоктайды. Студент одан сайын тұйықталады.'},
+         {id:'V',text:'Кел, алғашқы екі жолын бірге жасап көрейік, қалғанын өзің жалғастырасың ба?',correct:true,feedback:null},
+         {id:'G',text:'Қарашы, көршің Әсет қалай тез түсініп алды, сен де солай істе.',correct:false,feedback:'Қате! Салыстыру студенттің өзіне деген сенімін жояды және агрессия тудырады.'},
+         {id:'D',text:'Сен үнемі осылай сылтау айтасың, жауапкершіліктен қашуды қашан қоясың?',correct:false,feedback:'Қате! Айыптау арқылы сіз студентпен байланысты толық үзесіз.'},
+       ],
       },
       {pts:50,type:'video',scene:'meeting',
        voiceText:'Мына кеңес залына қараңыз. Жиын жүруде. Бір адам белсенді түрде тыңдап, сұрақтар қоюда. Басқасы қарсылық білдіруде.',
@@ -866,6 +923,52 @@ function initPhone(){
     ['sl1','sl2'].forEach((id,i)=>{$(id).className='ph-sl'+(n>i+1?' done':'')});
   }
 }
+
+
+/* ═══ PSYCH DECODER GAME ═══ */
+.pd-stage-lbl{text-align:center;font-size:.75rem;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.35);margin-bottom:14px;text-transform:uppercase}
+.pd-stage-title{text-align:center;font-size:1.15rem;font-weight:900;color:var(--gold);margin-bottom:4px;font-family:'Orbitron',sans-serif}
+.pd-stage-sub{text-align:center;color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:18px}
+.pd-penalty{text-align:center;color:#f87171;font-weight:800;font-size:.85rem;margin-bottom:10px;min-height:20px}
+/* Character + clouds */
+.pd-scene{position:relative;display:flex;justify-content:center;align-items:center;min-height:220px;margin-bottom:18px}
+.pd-student{width:72px;height:72px;border-radius:50%;background:linear-gradient(145deg,#2d1f50,#1a0f30);border:3px solid rgba(168,85,247,.4);display:flex;align-items:center;justify-content:center;font-size:2.5rem;position:relative;z-index:2;transition:.5s;flex-shrink:0}
+.pd-student.happy{background:linear-gradient(145deg,#14532d,#166534);border-color:rgba(34,197,94,.5)}
+.pd-clouds{position:absolute;inset:0;pointer-events:none}
+.pd-cloud{position:absolute;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:9px 12px;font-size:.72rem;color:rgba(255,255,255,.7);line-height:1.4;max-width:150px;transition:.3s;animation:cloudIn .4s ease both}
+@keyframes cloudIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.pd-cloud:nth-child(1){top:0;left:0}
+.pd-cloud:nth-child(2){top:0;right:0}
+.pd-cloud:nth-child(3){bottom:0;left:0}
+.pd-cloud:nth-child(4){bottom:0;right:0}
+/* Masks */
+.pd-masks{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.pd-mask{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 16px;cursor:pointer;font-weight:700;font-size:.92rem;color:#fff;transition:.18s;display:flex;align-items:center;gap:10px}
+.pd-mask:hover:not(.disabled){background:rgba(245,200,66,.09);border-color:var(--gold);transform:translateX(3px)}
+.pd-mask.disabled{pointer-events:none;opacity:.5}
+.pd-mask.wrong-mask{border-color:#ef4444;background:rgba(239,68,68,.1);animation:shake .35s ease}
+.pd-mask.correct-mask{border-color:#22c55e;background:rgba(34,197,94,.12)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pd-mask-icon{font-size:1.4rem;min-width:30px;text-align:center}
+/* Feedback bubble */
+.pd-feedback{border-radius:12px;padding:12px 15px;font-size:.83rem;line-height:1.5;margin-bottom:14px;display:none}
+.pd-feedback.show{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.pd-feedback.bad{background:rgba(239,68,68,.1);border-left:4px solid #ef4444;color:#fca5a5}
+.pd-feedback.good{background:rgba(34,197,94,.1);border-left:4px solid #22c55e;color:#4ade80}
+.pd-retry{background:rgba(245,200,66,.12);border:1.5px solid rgba(245,200,66,.3);color:var(--gold);border-radius:50px;padding:9px 22px;font-weight:800;font-size:.85rem;cursor:pointer;transition:.18s;margin-bottom:14px;display:none}
+.pd-retry:hover{background:rgba(245,200,66,.2)}
+/* Stage 2 blocks */
+.pd-blocks{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.pd-block{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 16px;cursor:pointer;font-size:.88rem;color:rgba(255,255,255,.85);line-height:1.5;transition:.18s;display:flex;align-items:center;gap:10px}
+.pd-block:hover:not(.disabled){background:rgba(245,200,66,.08);border-color:rgba(245,200,66,.4);transform:translateX(3px)}
+.pd-block.disabled{pointer-events:none}
+.pd-block.selected-block{border-color:#22c55e;background:rgba(34,197,94,.1)}
+.pd-block.wrong-block{border-color:#ef4444;background:rgba(239,68,68,.1);animation:shake .35s ease}
+.pd-block-id{background:rgba(255,255,255,.1);border-radius:8px;width:26px;height:26px;min-width:26px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;color:var(--gold)}
+.pd-select-hint{text-align:center;color:rgba(255,255,255,.4);font-size:.78rem;margin-bottom:10px}
+.pd-progress-bar{height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-bottom:18px}
+.pd-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),#22c55e);border-radius:3px;transition:.4s}
 
 /* ─── MAIN ─── */
 function initMain(){
@@ -1093,15 +1196,17 @@ function runGame(teamList){
     if(q.gameType==='sort') startSortGame(g,q);
     else if(q.gameType==='trueFalse') startTFGame(g,q);
     else if(q.gameType==='puzzle') startPuzzleGame(g,q);
+    else if(q.gameType==='psychDecoder') startPsychDecoderGame(g,q);
   }
 
-  function mgFinish(success){
+  function mgFinish(success, skipScore){
     stopTimer();answered=true;used[curQ.key]=true;
     const q=curQ.q;
     $('ff50Btn').classList.remove('off');
     if(success){
-      teams[curTeam].score+=q.pts;teams[curTeam].correct++;
-      setMsg(`ЖЕҢІС! 🎉🎮 +${q.pts} балл — ${teams[curTeam].name}`);SND.correct();launchConfetti();
+      if(!skipScore){teams[curTeam].score+=q.pts;}
+      teams[curTeam].correct++;
+      setMsg(`ЖЕҢІС! 🎉🎮 +${skipScore?'…':q.pts} балл — ${teams[curTeam].name}`);SND.correct();launchConfetti();
     } else {
       teams[curTeam].wrong++;setMsg(`УАҚЫТ НЕМЕСЕ ҚАТЕ 😕 — ${teams[curTeam].name}`);SND.wrong();
     }
@@ -1191,6 +1296,148 @@ function runGame(teamList){
       timeLeft--;$('timer').textContent=timeLeft;$('timer').className='timer'+(timeLeft<=7?' urgent':'');
       if(timeLeft<=0){clearInterval(timerInt);if(idx<sc.length){sc[idx].uOk=false;idx++;showTFResult();}}
     },1000);
+  }
+
+
+  /* ─── PSYCH DECODER GAME ─── */
+  function startPsychDecoderGame(g,q){
+    let penalty=0;
+    let stage=1;
+    let stage2Selected=[];
+    stopTimer(); // no global timer for this game
+
+    function addPenalty(){
+      penalty+=5;
+      teams[curTeam].score=Math.max(0,teams[curTeam].score-5);
+      updateSB();
+    }
+
+    function renderStage1(){
+      g.innerHTML=`
+        <div class="pd-stage-lbl">КЕЗЕҢ 1 / 2</div>
+        <div class="pd-stage-title">🎭 МАСКА ДИАГНОСТИКАСЫ</div>
+        <div class="pd-stage-sub">Студенттің мінез-құлқын бақылаңыз және «Маскасын» анықтаңыз</div>
+        <div class="pd-penalty" id="pdPenalty"></div>
+        <div class="pd-scene">
+          <div class="pd-clouds">
+            ${q.behaviors.map((b,i)=>`<div class="pd-cloud" style="animation-delay:${i*0.1}s">${b}</div>`).join('')}
+          </div>
+          <div class="pd-student" id="pdStudent">😤</div>
+        </div>
+        <div class="pd-feedback" id="pdFeedback1"></div>
+        <div class="pd-masks" id="pdMasks">
+          ${q.masks.map((m,i)=>`
+            <button class="pd-mask" data-mi="${i}">
+              <span class="pd-mask-icon">${['🙈','🎭','😩'][i]}</span>
+              <span>${m.text}</span>
+            </button>`).join('')}
+        </div>
+        <button class="pd-retry" id="pdRetry1">🔄 Қайтадан байқап көр</button>
+      `;
+
+      g.querySelectorAll('.pd-mask').forEach(btn=>{
+        btn.onclick=()=>{
+          const mi=+btn.dataset.mi;
+          const mask=q.masks[mi];
+          const fb=g.querySelector('#pdFeedback1');
+          const retry=g.querySelector('#pdRetry1');
+          // disable all
+          g.querySelectorAll('.pd-mask').forEach(b=>b.classList.add('disabled'));
+          if(mask.correct){
+            btn.classList.add('correct-mask');
+            fb.className='pd-feedback show good';
+            fb.textContent=mask.feedback;
+            retry.style.display='none';
+            g.querySelector('#pdStudent').textContent='😰';
+            SND.correct();
+            setTimeout(()=>renderStage2(),1800);
+          } else {
+            addPenalty();
+            btn.classList.add('wrong-mask');
+            fb.className='pd-feedback show bad';
+            fb.textContent=mask.feedback;
+            retry.style.display='block';
+            const penEl=g.querySelector('#pdPenalty');
+            penEl.textContent=`⚠️ Қате! -5 балл (жалпы шегерім: -${penalty} балл)`;
+            SND.wrong();
+            retry.onclick=()=>{renderStage1();};
+          }
+        };
+      });
+    }
+
+    function renderStage2(){
+      stage2Selected=[];
+      const correctBlocks=q.blocks.filter(b=>b.correct);
+      g.innerHTML=`
+        <div class="pd-stage-lbl">КЕЗЕҢ 2 / 2</div>
+        <div class="pd-stage-title">🧩 ШЕШІМ АЛГОРИТМІ</div>
+        <div class="pd-stage-sub">Студентке көмектесетін <strong>2 дұрыс блокты</strong> таңдаңыз</div>
+        <div class="pd-progress-bar"><div class="pd-progress-fill" id="pdProg" style="width:50%"></div></div>
+        <div class="pd-penalty" id="pdPenalty2"></div>
+        <div class="pd-select-hint" id="pdHint">Таңдалған: 0 / 2</div>
+        <div class="pd-blocks" id="pdBlocks">
+          ${q.blocks.map((b,i)=>`
+            <button class="pd-block" data-bi="${i}">
+              <span class="pd-block-id">${b.id}</span>
+              <span>${b.text}</span>
+            </button>`).join('')}
+        </div>
+        <div class="pd-feedback" id="pdFeedback2"></div>
+      `;
+
+      g.querySelectorAll('.pd-block').forEach(btn=>{
+        btn.onclick=()=>{
+          const bi=+btn.dataset.bi;
+          const block=q.blocks[bi];
+          const fb=g.querySelector('#pdFeedback2');
+          const hint=g.querySelector('#pdHint');
+          const penEl=g.querySelector('#pdPenalty2');
+
+          if(block.correct){
+            btn.classList.add('selected-block','disabled');
+            stage2Selected.push(bi);
+            hint.textContent=`Таңдалған: ${stage2Selected.length} / 2`;
+            SND.correct();
+            if(stage2Selected.length===2){
+              // Victory!
+              g.querySelector('#pdProg').style.width='100%';
+              g.querySelector('#pdStudent') && (g.querySelector('#pdStudent').textContent='😊');
+              const finalPts=Math.max(0,q.pts-penalty);
+              setTimeout(()=>{
+                g.innerHTML=`<div style="text-align:center;padding:28px 10px">
+                  <div style="font-size:4rem;margin-bottom:12px">🏆</div>
+                  <div style="font-size:1.3rem;font-weight:900;color:#4ade80;margin-bottom:8px">ЖЕҢІС!</div>
+                  <div style="color:rgba(255,255,255,.75);font-size:.9rem;line-height:1.6;margin-bottom:16px">
+                    Сіз студенттің қорқынышын сейілтіп, онымен кәсіби байланыс орнаттыңыз.
+                  </div>
+                  <div style="font-size:1.8rem;font-weight:900;color:var(--gold);margin-bottom:4px">+${finalPts} балл</div>
+                  ${penalty>0?`<div style="color:#f87171;font-size:.8rem">(-${penalty} балл шегерімімен)</div>`:''}
+                  <div style="font-size:3rem;margin-top:14px;animation:floatA 1s ease-in-out infinite">🎓</div>
+                </div>`;
+                setTimeout(()=>{
+                  // Award points (penalty already deducted during game, just add pts)
+                  teams[curTeam].score+=finalPts;
+                  mgFinish(true, true);
+                },2200);
+              },600);
+            }
+          } else {
+            addPenalty();
+            btn.classList.add('wrong-block','disabled');
+            fb.className='pd-feedback show bad';
+            fb.textContent=block.feedback;
+            penEl.textContent=`⚠️ Қате! -5 балл (жалпы шегерім: -${penalty} балл)`;
+            SND.wrong();
+            setTimeout(()=>{
+              fb.className='pd-feedback';
+            },2500);
+          }
+        };
+      });
+    }
+
+    renderStage1();
   }
 
   /* ─── PUZZLE GAME ─── */
