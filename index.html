@@ -943,8 +943,8 @@ function runGame(teamList){
 
   function renderCats(){
     bCats.innerHTML=CATS.map((cat,ci)=>{
-      const total=cat.subs.reduce((a,s)=>a+s.qs.length,0);
-      const done=cat.subs.reduce((a,s)=>a+s.qs.filter(q=>used[cat.id+s.id+q.pts]).length,0);
+      const total=cat.subs.reduce((a,s)=>a+s.qs.filter(q=>q.type!=='video').length,0);
+      const done=cat.subs.reduce((a,s)=>a+s.qs.filter(q=>q.type!=='video'&&used[cat.id+s.id+q.pts]).length,0);
       const pct=Math.round(done/total*100);
       return `<div class="cat-card ${cat.c}" onclick="selCat(${ci})">
         <div class="cat-inner">
@@ -965,12 +965,12 @@ function runGame(teamList){
   function renderSubs(ci){
     const cat=CATS[ci];
     $('subGrid').innerHTML=cat.subs.map((sub,si)=>{
-      const done=sub.qs.filter(q=>used[cat.id+sub.id+q.pts]).length;
+      const done=sub.qs.filter(q=>q.type!=='video'&&used[cat.id+sub.id+q.pts]).length;
       return `<div class="sub-card" onclick="selSub(${ci},${si})">
         <div class="sub-icon"><span class="mi" style="font-size:1.9rem;color:${sub.ic}">${sub.icon}</span></div>
         <div class="sub-card-name">${sub.emoji} ${sub.name}</div>
-        <div class="sub-card-pts">10 · 20 · 30 · <span style="color:#4ade80">40🎮</span> · <span style="color:#c084fc">50🎬</span></div>
-        ${done>0?`<div class="sub-done">✓ ${done}/5 жауапталды</div>`:''}
+        <div class="sub-card-pts">10 · 20 · 30 · 40</div>
+        ${done>0?`<div class="sub-done">✓ ${done}/4 жауапталды</div>`:''}
       </div>`;
     }).join('');
   }
@@ -984,15 +984,14 @@ function runGame(teamList){
 
   function renderQCards(ci,si){
     const cat=CATS[ci],sub=cat.subs[si];
-    $('qRow').innerHTML=sub.qs.map((q,qi)=>{
+    $('qRow').innerHTML=sub.qs.filter(q=>q.type!=='video').map((q)=>{
+      const realQi=sub.qs.indexOf(q);
       const k=cat.id+sub.id+q.pts,done=!!used[k];
       const tp=q.type||'normal';
-      const badge=tp==='game'?'<span class="q-type-badge g">🎮 МИН-ОЙЫН</span>':tp==='video'?'<span class="q-type-badge v">🎬 AI-VIDEO</span>':'';
-      return `<div class="q-card type-${tp} ${done?'q-used':''}" ${done?'':`onclick="openQ('${cat.id}','${sub.id}',${qi})"`}>
-        <span style="font-size:1.4rem">${done?'✅':tp==='game'?'🎮':tp==='video'?'🎬':'❓'}</span>
+      return `<div class="q-card type-${tp} ${done?'q-used':''}" ${done?'':`onclick="openQ('${cat.id}','${sub.id}',${realQi})"`}>
+        <span style="font-size:1.4rem">${done?'✅':tp==='game'?'🎮':'❓'}</span>
         <span class="q-pts">${q.pts}</span>
         <span class="q-pts-lbl">балл</span>
-        ${badge}
       </div>`;
     }).join('');
   }
@@ -1091,15 +1090,10 @@ function runGame(teamList){
     $('mgWrap').style.display='block';
     $('ff50Btn').classList.add('off');
     $('lawBtn').classList.add('off');
-    // show intro
-    $('mgIcon').textContent=q.gameIcon;
-    $('mgIntroTitle').textContent=q.gameTitle;
-    $('mgIntroDesc').textContent=q.gameDesc;
-    $('mgIntroReward').textContent=`🏆 Дұрыс жауапта +${q.pts} балл`;
-    $('mgIntro').style.display='flex';
-    $('mgGame').style.display='none';
+    $('mgIntro').style.display='none';
+    $('mgGame').style.display='block';
     $('timer').textContent='⏳';
-    $('mgStartBtn').onclick=()=>startMiniGame(q);
+    startMiniGame(q);
   }
 
   function startMiniGame(q){
@@ -1194,12 +1188,12 @@ function runGame(teamList){
       stopTimer();
       const all=sc.length;const full=score===all;
       g.innerHTML=`<div class="tf-final">
-        <div style="font-size:3.5rem">${full?'🎉':score>=Math.ceil(all*0.6)?'👍':'😕'}</div>
+        <div style="font-size:3.5rem">${full?'🎉':'😕'}</div>
         <div class="tf-big">${score}/${all}</div>
         <div class="tf-sub">Дұрыс жауап</div>
         <div style="margin-top:14px">${sc.map(s=>`<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.82rem;color:rgba(255,255,255,.6)">${s.uOk?'✅':'❌'} ${s.text}</div>`).join('')}</div>
       </div>`;
-      setTimeout(()=>mgFinish(score>=Math.ceil(sc.length*0.6)),2500);
+      setTimeout(()=>mgFinish(score===sc.length),2500);
     }
     renderT();
     // override timer end
@@ -1280,7 +1274,7 @@ function runGame(teamList){
     $('scoreboard').innerHTML=teams.map((t,i)=>`<div class="sc ${i===curTeam?'active':''}"><div class="sc-name">${esc(t.name)}</div><div class="sc-mem">${t.members.join(', ')}</div><div class="sc-score">${t.score}<small> балл</small></div></div>`).join('');
   }
   function checkAllDone(){
-    const total=CATS.reduce((a,c)=>a+c.subs.reduce((b,s)=>b+s.qs.length,0),0);
+    const total=CATS.reduce((a,c)=>a+c.subs.reduce((b,s)=>b+s.qs.filter(q=>q.type!=='video').length,0),0);
     if(Object.keys(used).length>=total)showFinish();
   }
   function showFinish(){
