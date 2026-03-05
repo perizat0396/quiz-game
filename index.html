@@ -752,6 +752,39 @@ body{
   .q-body{font-size:1.25rem;padding:18px}
   .answers-grid{gap:8px}
 }
+
+/* Image Modal */
+#imageModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.95);
+  z-index: 10000;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+#fullImage {
+  max-width: 90%;
+  max-height: 90%;
+  border: 3px solid #f5c842;
+  border-radius: 16px;
+  box-shadow: 0 0 40px rgba(245,200,66,0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -939,6 +972,12 @@ body{
   </div>
 </div>
 
+<!-- Суретті үлкейту модалы -->
+<div id="imageModal" onclick="closeFullImage()">
+  <img id="fullImage">
+  <div class="modal-close" onclick="closeFullImage(event)">✕</div>
+</div>
+
 <canvas id="confetti"></canvas>
 <div id="toastArea"></div>
 <div class="sync-bar" id="syncBar" style="display:none">
@@ -964,7 +1003,7 @@ function boot(){
 }
 
 // ════════════════════════════════════════════
-//  QUESTIONS DATABASE
+//  QUESTIONS DATABASE — ЖАҢА СҰРАҚТАР (ТАПҚЫРЛЫҚ)
 // ════════════════════════════════════════════
 const CATS = [
   {
@@ -1037,38 +1076,167 @@ const CATS = [
       {
         id:'jumbaq', icon:'auto_fix_high', iconColor:'#e879f9', name:'Жұмбақтар',
         qs:[
-          {pts:10, q:'Суға салсаң батпайды, отқа салсаң жанбайды, жерге салсаң шіримейді — бұл не?', opts:['А) Алтын','Б) Мұз','В) Тас','Г) Темір'], ok:0, law:'Жауап: Алтын — суда батпайтын, отта жанбайтын (ерісе де) асыл металл.'},
-          {pts:20, q:'Таңертең төрт аяқты, түсте екі аяқты, кешке үш аяқты — бұл не?', opts:['А) Жылқы','Б) Адам','В) Ит','Г) Тасбақа'], ok:1, law:'Классикалық жұмбақ: Адам — бала кезінде төрт аяқты, ересек екі аяқты, кәрілікте таяқпен үш аяқты.'},
-          {pts:30, q:'Мен бар болғанда сен жоқсың, сен бар болғанда мен жоқпын — бұл не?', opts:['А) Арман','Б) Көлеңке','В) Дыбыс','Г) Жарық'], ok:1, law:'Жауап: Көлеңке — жарық болғанда пайда болады, өзі болғанда жарық жоқ.'},
-          {pts:40, q:'Айтсаң да болады, айтпасаң да болады, бірақ ешкім айтпайды — бұл не?', opts:['А) Сыр','Б) Ауа','В) Ой','Г) Атың'], ok:3, law:'Жауап: Аты — адам өз атын өзіне айтпайды, бірақ өзгелер айтады.'},
+          // 10 балл
+          {pts:10, 
+           q:'<div style="text-align:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:16px; margin-bottom:15px;">' +
+             '<img src="images/jumbaq1.jpg" ' +
+             'onclick="openFullImage(this.src)" ' +
+             'style="max-width:100%; max-height:300px; width:auto; height:auto; border-radius:12px; border:3px solid rgba(245,200,66,0.3); cursor:pointer; transition:0.2s;" ' +
+             'onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">' +
+             '</div>',
+           opts:['А) Мұз','Б) Әйнек','В) Тас','Г) Темір'],
+           ok:0,
+           law:'Жауап: Мұз.'},
+
+          // 20 балл
+          {pts:20, 
+           q:'<div style="text-align:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:16px; margin-bottom:15px;">' +
+             '<img src="images/jumbaq2.jpg" ' +
+             'onclick="openFullImage(this.src)" ' +
+             'style="max-width:100%; max-height:300px; width:auto; height:auto; border-radius:12px; border:3px solid rgba(245,200,66,0.3); cursor:pointer; transition:0.2s;" ' +
+             'onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">' +
+             '</div>',
+           opts:['А) Құс','Б) Балық','В) Көбелек','Г) Жарқанат'],
+           ok:1,
+           law:'Жауап: Балық.'},
+
+          // 30 балл
+          {pts:30, 
+           q:'<div style="text-align:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:16px; margin-bottom:15px;">' +
+             '<img src="images/jumbaq3.jpg" ' +
+             'onclick="openFullImage(this.src)" ' +
+             'style="max-width:100%; max-height:300px; width:auto; height:auto; border-radius:12px; border:3px solid rgba(245,200,66,0.3); cursor:pointer; transition:0.2s;" ' +
+             'onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">' +
+             '</div>',
+           opts:['А) Бүркіт','Б) Үкі','В) Қарға','Г) Сауысқан'],
+           ok:1,
+           law:'Жауап: Үкі.'},
+
+          // 40 балл
+          {pts:40, 
+           q:'<div style="text-align:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:16px; margin-bottom:15px;">' +
+             '<img src="images/jumbaq4.jpg" ' +
+             'onclick="openFullImage(this.src)" ' +
+             'style="max-width:100%; max-height:300px; width:auto; height:auto; border-radius:12px; border:3px solid rgba(245,200,66,0.3); cursor:pointer; transition:0.2s;" ' +
+             'onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">' +
+             '</div>',
+           opts:['А) Тіл','Б) Жел','В) Дыбыс','Г) Сөз'],
+           ok:3,
+           law:'Жауап: Сөз.'},
         ]
       },
       {
         id:'logika', icon:'extension', iconColor:'#22d3ee', name:'Логика',
         qs:[
-          {pts:10, q:'5 + 3 × 2 = ?', opts:['А) 16','Б) 11','В) 10','Г) 13'], ok:1, law:'Математика ережесі: алдымен көбейту: 3×2=6, содан соң 5+6=11.'},
-          {pts:20, q:'Егер барлық мысықтар жануар болса, кейбір жануарлар ақ болса, онда...', opts:['А) Барлық мысықтар ақ','Б) Кейбір мысықтар ақ болуы мүмкін','В) Ешбір мысық ақ емес','Г) Барлық ақтар мысық'], ok:1, law:'Логика: мүмкіндік пен міндеттілікті ажырату керек.'},
-          {pts:30, q:'"Мен өтірік айтамын" деген адам рас айтып жатыр ма?', opts:['А) Рас айтады','Б) Өтірік айтады','В) Логикалық қайшылық','Г) Жауабы жоқ'], ok:2, law:'Эпименид парадоксы — бұл өзіне-өзі қайшы келетін логикалық парадокс.'},
-          {pts:40, q:'100-ге дейін барлық тақ сандардың қосындысы қанша?', opts:['А) 2500','Б) 2550','В) 5000','Г) 2499'], ok:0, law:'1-ден 99-ға дейін 50 тақ сан бар. Формула: 50² = 2500.'},
+          // 10 балл
+          {pts:10, 
+           q:'<div style="text-align:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:16px; margin-bottom:15px;">' +
+             '<img src="images/logika1.jpg" ' +
+             'onclick="openFullImage(this.src)" ' +
+             'style="max-width:100%; max-height:300px; width:auto; height:auto; border-radius:12px; border:3px solid rgba(245,200,66,0.3); cursor:pointer; transition:0.2s;" ' +
+             'onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">' +
+             '</div>',
+           opts:['А) 38','Б) 40','В) 42','Г) 45'],
+           ok:1,
+           law:'8+11+21=40'},
+
+          // 20 балл
+          {pts:20, 
+           q:'<div style="text-align:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:16px; margin-bottom:15px;">' +
+             '<img src="images/logika2.png" ' +
+             'onclick="openFullImage(this.src)" ' +
+             'style="max-width:100%; max-height:300px; width:auto; height:auto; border-radius:12px; border:3px solid rgba(245,200,66,0.3); cursor:pointer; transition:0.2s;" ' +
+             'onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">' +
+             '</div>',
+           opts:['А) 48','Б) 55','В) 99','Г) 36'],
+           ok:1,
+           law:'11x5=55'},
+
+          // 30 балл
+          {pts:30, 
+           q:'<div style="text-align:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:16px; margin-bottom:15px;">' +
+             '<img src="images/logika3.png" ' +
+             'onclick="openFullImage(this.src)" ' +
+             'style="max-width:100%; max-height:300px; width:auto; height:auto; border-radius:12px; border:3px solid rgba(245,200,66,0.3); cursor:pointer; transition:0.2s;" ' +
+             'onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">' +
+             '</div>',
+           opts:['А) 23','Б) 30','В) 25','Г) 26'],
+           ok:2,
+           law:'16+9=25'},
+
+          // 40 балл
+          {pts:40, 
+           q:'<div style="text-align:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:16px; margin-bottom:15px;">' +
+             '<img src="images/logika4.png" ' +
+             'onclick="openFullImage(this.src)" ' +
+             'style="max-width:100%; max-height:300px; width:auto; height:auto; border-radius:12px; border:3px solid rgba(245,200,66,0.3); cursor:pointer; transition:0.2s;" ' +
+             'onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">' +
+             '</div>',
+           opts:['А) 394','Б) 694','В) 349','Г) 963'],
+           ok:0,
+           law:'394'},
         ]
       },
       {
         id:'tapqyr', icon:'lightbulb', iconColor:'#fde047', name:'Тапқырлық',
         qs:[
-          {pts:10, q:'Желдеткіш бір минутта 600 айналым жасаса, 10 секундта неше айналым жасайды?', opts:['А) 60','Б) 100','В) 10','Г) 50'], ok:1, law:'600 ÷ 60 × 10 = 100 айналым.'},
-          {pts:20, q:'Қайсы сан квадраттаса да, кубқа да шықса да нөл болады?', opts:['А) 1','Б) -1','В) 0','Г) 10'], ok:2, law:'0² = 0, 0³ = 0 — нөлдің кез келген дәрежесі нөл.'},
-          {pts:30, q:'Кесте үстінде 3 алма бар, 1-ін алдық. Неше қалды?', opts:['А) 2','Б) 3','В) 1','Г) 0'], ok:0, law:'Тапқырлық: 3 алманың 1-ін алдық дегеніміз 1 бізде, 2 кестеде қалды — жауап 2.'},
-          {pts:40, q:'Маман 5 машинаны 5 минутта жөндесе, 100 машинаны қанша уақытта жөндейді?', opts:['А) 100 минут','Б) 500 минут','В) 5 минут','Г) 20 минут'], ok:0, law:'Тапқырлық: 1 маман 1 машинаны 5 минутта жөндейді. 100 машина × 1 мин = 100 минут.'},
+          // 1-сұрақ: Стакандар (10 балл)
+          {pts:10, 
+           q:'<div style="text-align:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:16px; margin-bottom:15px;">' +
+             '<img src="images/glass.png" ' +
+             'onclick="openFullImage(this.src)" ' +
+             'style="max-width:100%; max-height:300px; width:auto; height:auto; border-radius:12px; border:3px solid rgba(245,200,66,0.3); cursor:pointer; transition:0.2s;" ' +
+             'onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">' +
+             '</div>',
+           opts:['А) 4-ші стакан','Б) 5-ші стакан','В) 6-ші стакан','Г) 7-ші стакан'],
+           ok:0,
+           law:'Дұрыс жауап: 4-ші стакан.'},
+
+          // 2-сұрақ: Үшбұрыштар (20 балл)
+          {pts:20,
+           q:'<div style="text-align:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:16px; margin-bottom:15px;">' +
+             '<img src="images/triangles.avif" ' +
+             'onclick="openFullImage(this.src)" ' +
+             'style="max-width:100%; max-height:300px; width:auto; height:auto; border-radius:12px; border:3px solid rgba(245,200,66,0.3); cursor:pointer; transition:0.2s;" ' +
+             'onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">' +
+             '</div>',
+           opts:['А) 12','Б) 13','В) 16','Г) 18'],
+           ok:1,
+           law:'Дұрыс жауап: 13 үшбұрыш.'},
+
+          // 3-сұрақ: Логикалық есеп (30 балл)
+          {pts:30,
+           q:'<div style="text-align:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:16px; margin-bottom:15px;">' +
+             '<img src="images/math-puzzle.png" ' +
+             'onclick="openFullImage(this.src)" ' +
+             'style="max-width:100%; max-height:300px; width:auto; height:auto; border-radius:12px; border:3px solid rgba(245,200,66,0.3); cursor:pointer; transition:0.2s;" ' +
+             'onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">' +
+             '</div>',
+           opts:['А) 113','Б) 115','В) 117','Г) 119'],
+           ok:0,
+           law:'Дұрыс жауап: 113.'},
+
+          // 4-сұрақ: Түрлі-түсті фигуралар (40 балл)
+          {pts:40,
+           q:'<div style="text-align:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:16px; margin-bottom:15px;">' +
+             '<img src="images/colored-shapes.avif" ' +
+             'onclick="openFullImage(this.src)" ' +
+             'style="max-width:100%; max-height:300px; width:auto; height:auto; border-radius:12px; border:3px solid rgba(245,200,66,0.3); cursor:pointer; transition:0.2s;" ' +
+             'onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">' +
+             '</div>',
+           opts:['А) 52','Б) 54','В) 56','Г) 58'],
+           ok:1,
+           law:'Дұрыс жауап: 54.'}
         ]
-      },
+      }
     ]
-  },
+  }
 ];
 
 // Flat question lookup
 const ALL_QUESTIONS = [];
 CATS.forEach(cat => cat.subs.forEach(sub => sub.qs.forEach(q => {
-  ALL_QUESTIONS.push({...q, catId:cat.id, subId:sub.id, catName:cat.name, subName:sub.name, catEmoji:cat.emoji, subEmoji:sub.emoji});
+  ALL_QUESTIONS.push({...q, catId:cat.id, subId:sub.id, catName:cat.name, subName:sub.name});
 })));
 
 // ════════════════════════════════════════════
@@ -1249,9 +1417,7 @@ function initMain(){
         ok.style.display='inline-block'; drawDone=true;
         SND.drawReveal();
         $('drawResult').classList.add('show');
-        $('drWinner').innerHTML = ordered.map((t,i)=>
-          `<span style="display:inline-flex;align-items:center;gap:5px;opacity:${1-i*0.12};"><span style="background:rgba(245,200,66,.2);border:1.5px solid rgba(245,200,66,.4);color:#f5c842;border-radius:50%;width:22px;height:22px;min-width:22px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:.72rem;">${i+1}</span><span style="font-size:${1-i*0.05}rem;font-weight:700;">${esc(t.name)}</span></span>`
-        ).join('<span style="color:rgba(255,255,255,.25);margin:0 4px;">→</span>');
+        $('drWinner').innerHTML = ordered.map((t,i)=>`<span style="display:inline-flex;align-items:center;gap:5px;opacity:${1-i*0.12};"><span style="background:rgba(245,200,66,.2);border:1.5px solid rgba(245,200,66,.4);color:#f5c842;border-radius:50%;width:22px;height:22px;min-width:22px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:.72rem;">${i+1}</span><span style="font-size:${1-i*0.05}rem;font-weight:700;">${esc(t.name)}</span></span>`).join('<span style="color:rgba(255,255,255,.25);margin:0 4px;">→</span>');
         $('startBtn').style.display='inline-flex';
         launchConfetti();
       }
@@ -1366,11 +1532,11 @@ function runGame(teamList){
   function renderQCards(ci,si){
     const cat = CATS[ci];
     const sub = cat.subs[si];
-    $('qCardsRow').innerHTML = sub.qs.map(q=>{
+    $('qCardsRow').innerHTML = sub.qs.map((q,idx)=>{
       const k   = cat.id+sub.id+q.pts;
       const done = !!used[k];
       return `
-        <div class="q-card ${done?'q-used':'q-free'}" ${done?'':` onclick="openQ('${cat.id}','${sub.id}',${sub.qs.indexOf(q)})"`}>
+        <div class="q-card ${done?'q-used':'q-free'}" ${done?'':` onclick="openQ('${cat.id}','${sub.id}',${idx})"`}>
           <span class="q-status">${done?'✅':'❓'}</span>
           <span class="q-pts">${q.pts}</span>
           <span class="q-pts-label">балл</span>
@@ -1389,8 +1555,8 @@ function runGame(teamList){
     curQ = {catId,subId,qi,key,q};
 
     $('qmCat').innerHTML = `<i class="ms-sm" style="color:${cat.iconColor}">${cat.icon}</i> ${cat.name} › <i class="ms-sm" style="color:${sub.iconColor}">${sub.icon}</i> ${sub.name} · <strong>${q.pts} балл</strong>`;
-    $('qBody').textContent = q.q;
-    $('lawBox').textContent = q.law;
+    $('qBody').innerHTML = q.q;
+    $('lawBox').innerHTML = q.law;
     $('lawBox').classList.remove('on');
     $('lawBtn').innerHTML = '📖 Жауабы';
     $('ff50Btn').classList.remove('off');
@@ -1404,7 +1570,7 @@ function runGame(teamList){
     `).join('');
     document.querySelectorAll('.ans').forEach(b=>b.onclick=onAns);
 
-    timeLeft=20; $('timerBox').textContent=20; $('timerBox').className='timer-box';
+    timeLeft=30; $('timerBox').textContent=30; $('timerBox').className='timer-box';
     clearInterval(timerInt);
     timerInt=setInterval(()=>{
       timeLeft--;
@@ -1524,10 +1690,6 @@ function runGame(teamList){
 }
 
 // ════════════════════════════════════════════
-//  CONFETTI
-// ════════════════════════════════════════════
-
-// ════════════════════════════════════════════
 //  SOUND ENGINE (Web Audio API — no files)
 // ════════════════════════════════════════════
 const SND = (()=>{
@@ -1581,6 +1743,21 @@ const SND = (()=>{
   };
 })();
 
+// Суретті үлкейту функциялары
+window.openFullImage = function(src) {
+  const modal = document.getElementById('imageModal');
+  const img = document.getElementById('fullImage');
+  img.src = src;
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeFullImage = function(e) {
+  if(e) e.stopPropagation();
+  document.getElementById('imageModal').style.display = 'none';
+  document.body.style.overflow = 'auto';
+};
+
 function launchConfetti(){
   const cv=$('confetti'), cx=cv.getContext('2d');
   cv.width=innerWidth; cv.height=innerHeight;
@@ -1608,7 +1785,5 @@ function launchConfetti(){
 </script>
 </body>
 </html>
-
-
 
 
