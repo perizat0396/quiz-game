@@ -544,7 +544,7 @@ body{
   <div class="q-modal">
     <div class="qm-head">
       <div class="qm-cat" id="qmCat">—</div>
-      <button class="timer-start-btn" id="timerBox" onclick="startQuestionTimer()">⏱ Уақыт</button>
+      <button class="timer-start-btn" id="timerBox">⏱ Уақыт</button>
     </div>
     <div class="q-body" id="qBody">—</div>
     <div class="answers-grid" id="answersGrid"></div>
@@ -1070,12 +1070,13 @@ function runGame(teamList){
     tb.textContent='⏱ Уақыт';
     tb.className='timer-start-btn';
     tb.disabled=false;
+    tb.onclick = startQuestionTimer;
 
     $('qOverlay').classList.add('on'); modalOn=true;
     SND.questionOpenChime();
   };
 
-  window.startQuestionTimer = ()=>{
+  function startQuestionTimer(){
     if(timerStarted || answered) return;
     timerStarted = true;
     const tb = $('timerBox');
