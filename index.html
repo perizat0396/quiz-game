@@ -120,6 +120,7 @@ body{
   color:rgba(255,255,255,.55);
   margin-top:2px;
 }
+  
 .topbar-badges{
   display:flex;
   gap:10px;
@@ -224,6 +225,11 @@ body{
 @keyframes popIn{
   from{opacity:0;transform:scale(.88) translateY(12px)}
   to  {opacity:1;transform:scale(1) translateY(0)}
+}
+
+  @keyframes timeoutPop{
+  from{opacity:0;transform:translate(-50%,-50%) scale(.6)}
+  to  {opacity:1;transform:translate(-50%,-50%) scale(1)}
 }
 .tc-num-name{
   display:flex;align-items:center;gap:8px;
@@ -1570,7 +1576,7 @@ function runGame(teamList){
     `).join('');
     document.querySelectorAll('.ans').forEach(b=>b.onclick=onAns);
 
-    timeLeft=30; $('timerBox').textContent=30; $('timerBox').className='timer-box';
+    timeLeft=25; $('timerBox').textContent=25; $('timerBox').className='timer-box';
     clearInterval(timerInt);
     timerInt=setInterval(()=>{
       timeLeft--;
@@ -1604,46 +1610,39 @@ function runGame(teamList){
     updateTeamDisplay(); clearInterval(timerInt);
   }
 
-  function onTimeout(){
-    const q=curQ.q;
-    document.querySelectorAll('.ans').forEach(b=>{
-      b.style.pointerEvents='none';
-      if(+b.dataset.i===q.ok) b.classList.add('correct');
-    });
-    answered=true; used[curQ.key]=true;
-    teams[curTeam].wrong++; setMsg('УАҚЫТ БІТТІ! ⏰');
-    SND.timeout();
-    curTeam=(curTeam+1)%teams.length; updateTeamDisplay();
-  }
+function onTimeout(){
+  const q=curQ.q;
+  document.querySelectorAll('.ans').forEach(b=>{
+    b.style.pointerEvents='none';
+    if(+b.dataset.i===q.ok) b.classList.add('correct');
+    else b.style.opacity='0.25';
+  });
+  answered=true; used[curQ.key]=true;
+  teams[curTeam].wrong++;
+  setMsg('УАҚЫТ БІТТІ! ⏰');
+  SND.timeout();
 
-  $('ff50Btn').onclick=()=>{
-    if(answered||ff50done){toast(answered?'Жауап берілді!':'50/50 қолданылды!');return;}
-    const q=curQ.q;
-    const btns=[...document.querySelectorAll('.ans')];
-    const wrong=btns.filter((_,i)=>i!==q.ok).sort(()=>Math.random()-.5).slice(0,2);
-    wrong.forEach(b=>b.classList.add('no-ptr'));
-    ff50done=true; $('ff50Btn').classList.add('off'); SND.click(); toast('50/50 қолданылды! ✨');
-  };
+  // Красный баннер внутри модала
+  const existing = document.getElementById('timeoutBanner');
+  if(existing) existing.remove();
+  const banner = document.createElement('div');
+  banner.id = 'timeoutBanner';
+  banner.innerHTML = '⏰ УАҚЫТ БІТТІ!';
+  banner.style.cssText = `
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    background:rgba(239,68,68,0.97);color:#fff;font-size:2.2rem;
+    font-weight:900;padding:22px 48px;border-radius:20px;
+    border:3px solid #fca5a5;z-index:200;
+    box-shadow:0 0 50px rgba(239,68,68,0.7);
+    animation:timeoutPop .4s cubic-bezier(.175,.885,.32,1.275);
+    text-align:center;white-space:nowrap;pointer-events:none;
+  `;
+  document.querySelector('.q-modal').style.position='relative';
+  document.querySelector('.q-modal').appendChild(banner);
+  setTimeout(()=>{ if(banner.parentNode) banner.remove(); }, 2200);
 
-  $('lawBtn').onclick=()=>{
-    if(!answered){toast('Алдымен жауап беріңіз! ⚠️');return;}
-    $('lawBox').classList.toggle('on');
-    $('lawBtn').innerHTML=$('lawBox').classList.contains('on')?'📖 Жауабын жабу':'📖 Жауабы';
-  };
-
-  $('closeQBtn').onclick=()=>{
-    $('qOverlay').classList.remove('on'); modalOn=false;
-    $('lawBox').classList.remove('on'); clearInterval(timerInt);
-    SND.stopTicking(); SND.click();
-    // Refresh current view
-    if(curCatIdx!==null && curSubIdx!==null) renderQCards(curCatIdx,curSubIdx);
-    renderCats();
-    showQs();
-    // Check all done
-    const totalQ=CATS.reduce((a,c)=>a+c.subs.reduce((b,s)=>b+s.qs.length,0),0);
-    if(Object.keys(used).length>=totalQ) showFinish();
-    else setMsg(`${teams[curTeam].name} — категория таңда! 🎯`);
-  };
+  curTeam=(curTeam+1)%teams.length; updateTeamDisplay();
+}
 
   function setMsg(t){$('gMsg').textContent=t;}
 
@@ -1785,6 +1784,7 @@ function launchConfetti(){
 </script>
 </body>
 </html>
+
 
 
 
