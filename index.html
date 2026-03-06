@@ -1074,6 +1074,7 @@ function runGame(teamList){
 
     $('qOverlay').classList.add('on'); modalOn=true;
     SND.questionOpenChime();
+    setTimeout(()=>SND.startTicking(), 350);
   };
 
   function startQuestionTimer(){
