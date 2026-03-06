@@ -730,7 +730,23 @@ function initMain(){
   const db = window._db;
   const SITE = location.origin + location.pathname;
 
-  try{ new QRCode($('qrcode'),{text:SITE+'?join=true',width:150,height:150}); }catch(e){}
+  function makeQR(){
+    const el = $('qrcode');
+    el.innerHTML = '';
+    if(typeof QRCode !== 'undefined'){
+      new QRCode(el,{text:SITE+'?join=true',width:150,height:150,correctLevel:QRCode.CorrectLevel.M});
+    } else {
+      // QRCode library not loaded yet — show URL as fallback
+      el.innerHTML = '<div style="background:#fff;padding:10px;border-radius:8px;color:#000;font-size:.7rem;word-break:break-all;max-width:150px;text-align:center">'+SITE+'?join=true</div>';
+      setTimeout(makeQR, 400);
+    }
+  }
+  // Wait for qrcodejs to finish loading
+  if(document.readyState === 'complete'){
+    makeQR();
+  } else {
+    window.addEventListener('load', makeQR);
+  }
 
   let teams={}, drawIdx=0, drawDone=false;
 
@@ -1068,17 +1084,28 @@ function runGame(teamList){
   };
 
   $('closeQBtn').onclick=()=>{
-    $('qOverlay').classList.remove('on'); modalOn=false;
-    $('lawBox').classList.remove('on'); clearInterval(timerInt);
-    SND.stopTicking(); SND.click();
+    $('qOverlay').classList.remove('on');
+    $('lawBox').classList.remove('on');
+    clearInterval(timerInt);
+    SND.stopTicking();
+    SND.click();
+    modalOn = false;
+    answered = false;
+
     const ban = document.getElementById('timeoutBanner');
     if(ban) ban.remove();
-    if(curCatIdx!==null && curSubIdx!==null) renderQCards(curCatIdx,curSubIdx);
-    renderCats();
-    showQs();
-    const totalQ=CATS.reduce((a,c)=>a+c.subs.reduce((b,s)=>b+s.qs.length,0),0);
-    if(Object.keys(used).length>=totalQ) showFinish();
-    else setMsg(`${teams[curTeam].name} — категория таңда! 🎯`);
+
+    const totalQ = CATS.reduce((a,c)=>a+c.subs.reduce((b,s)=>b+s.qs.length,0),0);
+    if(Object.keys(used).length >= totalQ){ showFinish(); return; }
+
+    if(curCatIdx !== null && curSubIdx !== null){
+      renderQCards(curCatIdx, curSubIdx);
+      showQs();
+    } else {
+      renderCats();
+      showCats();
+    }
+    setMsg(`${teams[curTeam].name} — сұрақ таңда! 🎯`);
   };
 
   function setMsg(t){$('gMsg').textContent=t;}
