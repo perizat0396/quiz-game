@@ -1064,7 +1064,7 @@ function runGame(teamList){
     }
 
     // ── Уақыт батырмасын қалпына келтіру ──
-    timeLeft=25; timerStarted=false;
+    timeLeft = (q.subId === 'tapqyr' && q.pts === 40) ? 50 : 25; timerStarted=false;
     clearInterval(timerInt);
     const tb = $('timerBox');
     tb.textContent='⏱ Уақыт';
