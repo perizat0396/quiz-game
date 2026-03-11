@@ -262,7 +262,6 @@ body{
 .law-box{display:none;margin-top:16px;background:rgba(245,200,66,.07);border-left:4px solid var(--gold);border-radius:12px;padding:16px 20px;color:var(--gold);font-weight:600;font-size:1rem;line-height:1.5;}
 .law-box.on{display:block}
 
-/* ── JUDGE MODE ── */
 .judge-answer-reveal{
   background:rgba(245,200,66,.08);
   border:2px solid rgba(245,200,66,.35);
@@ -298,19 +297,6 @@ body{
 .judge-btn.pressed{pointer-events:none;opacity:.6;transform:none!important}
 .judge-btn.judge-correct{background:rgba(34,197,94,.35)!important;border-color:#22c55e!important;color:#fff!important;opacity:1!important}
 .judge-btn.judge-wrong  {background:rgba(239,68,68,.35)!important;border-color:#ef4444!important;color:#fff!important;opacity:1!important}
-
-/* ── TIMEOUT BANNER ── */
-@keyframes timeoutPop{
-  from{opacity:0;transform:translate(-50%,-50%) scale(.55)}
-  to  {opacity:1;transform:translate(-50%,-50%) scale(1)}
-}
-@keyframes timeoutShake{
-  0%,100%{transform:translate(-50%,-50%) scale(1)}
-  20%{transform:translate(calc(-50% - 8px),-50%) scale(1)}
-  40%{transform:translate(calc(-50% + 8px),-50%) scale(1)}
-  60%{transform:translate(calc(-50% - 5px),-50%) scale(1)}
-  80%{transform:translate(calc(-50% + 5px),-50%) scale(1)}
-}
 
 .draw-modal{background:linear-gradient(145deg,#0d1120,#131929);border:2px solid rgba(245,200,66,.3);border-radius:24px;padding:48px 40px;text-align:center;max-width:560px;width:92%;}
 .dm-title{font-size:2rem;font-weight:900;color:#fff;margin-bottom:24px}
@@ -401,9 +387,189 @@ body{
 #imageModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:10000;justify-content:center;align-items:center;cursor:pointer;}
 #fullImage{max-width:90%;max-height:90%;border:3px solid #f5c842;border-radius:16px;box-shadow:0 0 40px rgba(245,200,66,0.3);}
 .modal-close{position:absolute;top:20px;right:30px;color:#fff;font-size:2rem;font-weight:bold;cursor:pointer;}
+
+/* ===== SPLASH SCREEN STYLES ===== */
+@keyframes splashRingPulse{0%,100%{opacity:0.4;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.04)}}
+@keyframes splashIconFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes splashIconGlow{from{filter:drop-shadow(0 0 18px rgba(245,200,66,0.45))}to{filter:drop-shadow(0 0 48px rgba(245,200,66,1)) drop-shadow(0 0 80px rgba(245,200,66,0.35))}}
+@keyframes splashTitleShine{to{background-position:200% center}}
+@keyframes splashLineGrow{from{width:0;opacity:0}to{width:220px;opacity:1}}
+@keyframes splashFadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes splashBtnPulse{0%,100%{box-shadow:0 8px 32px rgba(245,200,66,0.45),0 0 0 0 rgba(245,200,66,0.4)}50%{box-shadow:0 8px 40px rgba(245,200,66,0.7),0 0 0 18px rgba(245,200,66,0)}}
+@keyframes splashShimmer{0%,100%{transform:translateX(-130%)}45%,55%{transform:translateX(130%)}}
+@keyframes splashOut{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.07);pointer-events:none}}
 </style>
 </head>
 <body>
+
+<!-- ===== SPLASH SCREEN ===== -->
+<div id="splashScreen" style="
+  position:fixed;inset:0;z-index:9999;
+  background:#06080f;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  overflow:hidden;
+  font-family:'Montserrat',sans-serif;
+">
+  <!-- Particle canvas -->
+  <canvas id="splashCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0"></canvas>
+
+  <!-- Outer glow rings -->
+  <div style="position:absolute;width:min(700px,90vw);height:min(700px,90vw);border-radius:50%;border:1.5px solid rgba(245,200,66,0.07);top:50%;left:50%;transform:translate(-50%,-50%);animation:splashRingPulse 4s ease-in-out infinite;pointer-events:none;"></div>
+  <div style="position:absolute;width:min(520px,70vw);height:min(520px,70vw);border-radius:50%;border:1px solid rgba(245,200,66,0.10);top:50%;left:50%;transform:translate(-50%,-50%);animation:splashRingPulse 4s ease-in-out infinite 1.2s;pointer-events:none;"></div>
+  <div style="position:absolute;width:min(340px,50vw);height:min(340px,50vw);border-radius:50%;border:1px solid rgba(245,200,66,0.06);top:50%;left:50%;transform:translate(-50%,-50%);animation:splashRingPulse 4s ease-in-out infinite 0.6s;pointer-events:none;"></div>
+
+  <!-- Content -->
+  <div style="position:relative;z-index:2;text-align:center;padding:24px 32px;max-width:860px;width:100%">
+
+    <!-- Trophy icon -->
+    <div style="margin-bottom:16px;animation:splashIconFloat 3s ease-in-out infinite">
+      <span style="
+        font-family:'Material Symbols Rounded';
+        font-size:clamp(4rem,10vw,5.5rem);
+        color:#f5c842;
+        animation:splashIconGlow 2s ease-in-out infinite alternate;
+        display:inline-block;
+        line-height:1;
+      ">emoji_events</span>
+    </div>
+
+    <!-- BILIM BATTLE -->
+    <div style="
+      font-size:clamp(3rem,11vw,7.5rem);
+      font-weight:900;
+      letter-spacing:clamp(2px,1vw,6px);
+      line-height:1;
+      margin-bottom:10px;
+      background:linear-gradient(135deg,#ffffff 0%,#f5c842 35%,#fffde7 55%,#f5c842 75%,#ffffff 100%);
+      background-size:200% auto;
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      animation:splashTitleShine 3.5s linear infinite;
+    ">BILIM BATTLE</div>
+
+    <!-- Gold divider line -->
+    <div style="
+      height:3px;
+      background:linear-gradient(90deg,transparent,#f5c842,transparent);
+      margin:14px auto 18px;
+      animation:splashLineGrow 1s ease-out 0.4s both;
+      width:220px;
+    "></div>
+
+    <!-- Decade subtitle -->
+    <div style="
+      color:rgba(255,255,255,0.88);
+      font-size:clamp(0.78rem,2.2vw,1.05rem);
+      font-weight:700;
+      letter-spacing:0.5px;
+      line-height:1.6;
+      margin-bottom:4px;
+      animation:splashFadeUp 0.9s ease-out 0.6s both;
+      text-transform:uppercase;
+    ">Ғылыми - Жаратылыстану пәндік-циклдік бірлестігінің декадасы</div>
+
+    <!-- Organizers box -->
+    <div style="
+      margin:18px auto 32px;
+      max-width:580px;
+      background:linear-gradient(135deg,rgba(245,200,66,0.06),rgba(245,200,66,0.03));
+      border:1.5px solid rgba(245,200,66,0.22);
+      border-radius:18px;
+      padding:15px 24px;
+      animation:splashFadeUp 0.9s ease-out 0.85s both;
+    ">
+      <div style="color:rgba(255,255,255,0.38);font-size:0.72rem;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:9px;font-weight:700;">Ұйымдастырушылар</div>
+      <div style="
+        color:#f5c842;
+        font-weight:800;
+        font-size:clamp(0.82rem,2.1vw,0.98rem);
+        line-height:1.8;
+        display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;
+      ">
+        <span>Токенова Ж.М.</span>
+        <span style="color:rgba(245,200,66,0.35)">·</span>
+        <span>Әбдіқапар М.</span>
+        <span style="color:rgba(245,200,66,0.35)">·</span>
+        <span>Әнәфия П.Е.</span>
+      </div>
+    </div>
+
+    <!-- БАСТАУ button -->
+    <button
+      id="splashStartBtn"
+      onclick="startGame()"
+      style="
+        background:linear-gradient(135deg,#f5c842,#d4a820);
+        border:none;
+        color:#000;
+        font-family:'Montserrat',sans-serif;
+        font-weight:900;
+        font-size:clamp(1.1rem,3.5vw,1.55rem);
+        letter-spacing:4px;
+        text-transform:uppercase;
+        padding:clamp(14px,3vw,20px) clamp(36px,8vw,68px);
+        border-radius:60px;
+        cursor:pointer;
+        animation:splashFadeUp 0.9s ease-out 1.1s both, splashBtnPulse 2.8s ease-in-out 2.2s infinite;
+        position:relative;
+        overflow:hidden;
+        display:inline-flex;
+        align-items:center;
+        gap:12px;
+        transition:transform 0.18s, filter 0.18s;
+      "
+      onmouseover="this.style.transform='scale(1.07)';this.style.filter='brightness(1.1)'"
+      onmouseout="this.style.transform='scale(1)';this.style.filter='brightness(1)'"
+    >
+      <span style="font-family:'Material Symbols Rounded';font-size:1.5em;line-height:1;display:inline-block">play_circle</span>
+      БАСТАУ
+      <!-- Shimmer sweep -->
+      <span style="
+        position:absolute;inset:0;
+        background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,0.38) 50%,transparent 65%);
+        animation:splashShimmer 3s ease-in-out 2.5s infinite;
+        pointer-events:none;
+      "></span>
+    </button>
+
+  </div>
+
+  <script>
+    // Starfield particle animation
+    (function(){
+      const cv = document.getElementById('splashCanvas');
+      const ctx = cv.getContext('2d');
+      let W, H;
+      function resize(){ W = cv.width = innerWidth; H = cv.height = innerHeight; }
+      resize();
+      window.addEventListener('resize', resize);
+      const stars = Array.from({length:200}, ()=>({
+        x: Math.random(), y: Math.random(),
+        r: Math.random() * 1.8 + 0.2,
+        a: Math.random(),
+        da: (Math.random() * 0.007 + 0.002) * (Math.random() > 0.5 ? 1 : -1),
+        drift: (Math.random() - 0.5) * 0.00015
+      }));
+      function draw(){
+        ctx.clearRect(0, 0, W, H);
+        stars.forEach(s => {
+          s.a += s.da;
+          if (s.a > 1 || s.a < 0) s.da *= -1;
+          s.x = (s.x + s.drift + 1) % 1;
+          ctx.beginPath();
+          ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(245,200,66,' + (s.a * 0.55) + ')';
+          ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+  </script>
+</div>
+<!-- ===== END SPLASH SCREEN ===== -->
 
 <div id="mainScreen">
   <div class="topbar">
@@ -571,11 +737,23 @@ body{
 </div>
 
 <script>
+// ===== SPLASH → GAME transition =====
+function startGame(){
+  const splash = document.getElementById('splashScreen');
+  if(!splash) return;
+  splash.style.animation = 'splashOut 0.55s cubic-bezier(0.4,0,0.8,1) forwards';
+  splash.style.pointerEvents = 'none';
+  setTimeout(()=>{ if(splash && splash.parentNode) splash.parentNode.removeChild(splash); }, 570);
+}
+
 if(window._db) boot(); else window.addEventListener('fb-ready', boot);
 
 function boot(){
   const isPhone = new URLSearchParams(location.search).get('join') === 'true';
   if(isPhone){
+    // On phone, skip splash immediately
+    const splash = document.getElementById('splashScreen');
+    if(splash) splash.parentNode.removeChild(splash);
     document.getElementById('mainScreen').style.display = 'none';
     document.getElementById('phoneScreen').classList.add('on');
     initPhone();
@@ -790,12 +968,10 @@ function initMain(){
     if(typeof QRCode !== 'undefined'){
       new QRCode(el,{text:SITE+'?join=true',width:150,height:150,correctLevel:QRCode.CorrectLevel.M});
     } else {
-      // QRCode library not loaded yet — show URL as fallback
       el.innerHTML = '<div style="background:#fff;padding:10px;border-radius:8px;color:#000;font-size:.7rem;word-break:break-all;max-width:150px;text-align:center">'+SITE+'?join=true</div>';
       setTimeout(makeQR, 400);
     }
   }
-  // Wait for qrcodejs to finish loading
   if(document.readyState === 'complete'){
     makeQR();
   } else {
@@ -1003,12 +1179,10 @@ function runGame(teamList){
     $('ff50Btn').classList.remove('off');
     ff50done=false; answered=false;
 
-    // Remove any leftover timeout banner
     const old = document.getElementById('timeoutBanner');
     if(old) old.remove();
 
     if(q.type === 'judge'){
-      // Мақал режимі: Дұрыс / Дұрыс емес
       $('answersGrid').innerHTML = `
         <div class="judge-answer-reveal" id="judgeReveal" style="display:none">
           📖 ${esc(q.answer)}
@@ -1026,7 +1200,6 @@ function runGame(teamList){
         used[curQ.key] = true;
         clearInterval(timerInt);
 
-        // Show correct answer reveal
         const rev = document.getElementById('judgeReveal');
         if(rev) rev.style.display = 'block';
 
@@ -1063,7 +1236,6 @@ function runGame(teamList){
       document.querySelectorAll('.ans').forEach(b=>b.onclick=onAns);
     }
 
-    // ── Уақыт батырмасын қалпына келтіру ──
     timeLeft = (subId === 'tapqyr' && q.pts === 40) ? 50 : 25; timerStarted=false;
     clearInterval(timerInt);
     const tb = $('timerBox');
@@ -1120,7 +1292,6 @@ function runGame(teamList){
     const q=curQ.q;
 
     if(q.type === 'judge'){
-      // Judge mode: disable buttons, reveal answer, no points
       const btnC = document.getElementById('judgeCorrect');
       const btnW = document.getElementById('judgeWrong');
       if(btnC){ btnC.classList.add('pressed'); btnC.style.opacity='0.3'; }
@@ -1128,7 +1299,6 @@ function runGame(teamList){
       const rev = document.getElementById('judgeReveal');
       if(rev) rev.style.display = 'block';
     } else {
-      // Normal mode: show correct answer
       document.querySelectorAll('.ans').forEach(b=>{
         b.style.pointerEvents='none';
         if(+b.dataset.i===q.ok){
@@ -1144,7 +1314,6 @@ function runGame(teamList){
     setMsg('УАҚЫТ БІТТІ! ⏰');
     SND.timeout();
 
-    // ── Қызыл баннер ──
     const existing = document.getElementById('timeoutBanner');
     if(existing) existing.remove();
 
@@ -1152,46 +1321,28 @@ function runGame(teamList){
     banner.id = 'timeoutBanner';
     banner.innerHTML = '⏰ УАҚЫТ БІТТІ!';
     banner.style.cssText = [
-      'position:absolute',
-      'top:50%',
-      'left:50%',
+      'position:absolute','top:50%','left:50%',
       'transform:translate(-50%,-50%)',
       'background:linear-gradient(135deg,#dc2626,#991b1b)',
-      'color:#fff',
-      'font-size:2.4rem',
-      'font-weight:900',
-      'padding:28px 56px',
-      'border-radius:24px',
-      'border:3px solid #fca5a5',
-      'z-index:200',
+      'color:#fff','font-size:2.4rem','font-weight:900',
+      'padding:28px 56px','border-radius:24px',
+      'border:3px solid #fca5a5','z-index:200',
       'box-shadow:0 0 0 8px rgba(220,38,38,0.25),0 0 60px rgba(220,38,38,0.6)',
       'animation:timeoutPop .45s cubic-bezier(.175,.885,.32,1.275) forwards',
-      'text-align:center',
-      'white-space:nowrap',
-      'pointer-events:none',
-      'letter-spacing:1px',
-      'text-shadow:0 2px 8px rgba(0,0,0,0.5)',
+      'text-align:center','white-space:nowrap','pointer-events:none',
+      'letter-spacing:1px','text-shadow:0 2px 8px rgba(0,0,0,0.5)',
     ].join(';');
 
-    // Inject keyframe if not already present
     if(!document.getElementById('toKf')){
       const st = document.createElement('style');
       st.id = 'toKf';
-      st.textContent = `
-        @keyframes timeoutPop{
-          0%  {opacity:0;transform:translate(-50%,-50%) scale(.4)}
-          70% {opacity:1;transform:translate(-50%,-50%) scale(1.08)}
-          100%{opacity:1;transform:translate(-50%,-50%) scale(1)}
-        }
-      `;
+      st.textContent = `@keyframes timeoutPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}70%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}`;
       document.head.appendChild(st);
     }
 
     const modal = document.querySelector('.q-modal');
     modal.style.position = 'relative';
     modal.appendChild(banner);
-
-    // Auto-remove after 2.3 sec
     setTimeout(()=>{ if(banner.parentNode) banner.remove(); }, 2300);
 
     curTeam=(curTeam+1)%teams.length;
@@ -1275,7 +1426,6 @@ function runGame(teamList){
       <button class="restart-btn" onclick="location.reload()"><i class="ms-sm">refresh</i> Қайта ойнау</button>
     </div>`;
     launchConfetti();
-    // Delay sound slightly for drama
     setTimeout(()=>SND.finish(), 400);
   }
 
@@ -1313,7 +1463,6 @@ const SND = (()=>{
     startTicking(){ SND.stopTicking(); tick(); tickInt=setInterval(tick,1000); },
     stopTicking(){ if(tickInt){clearInterval(tickInt);tickInt=null;} },
     questionOpenChime(){
-      // Short "question appeared" chime only — no ticking until Уақыт pressed
       tone(523,'sine',0.12,0.22); tone(659,'sine',0.10,0.18,0.12); tone(784,'sine',0.10,0.18,0.24);
     },
     questionOpen(){
@@ -1331,13 +1480,10 @@ const SND = (()=>{
     },
     timeout(){
       SND.stopTicking();
-      // Драматичный нарастающий звук ошибки
       tone(440,'sawtooth',0.15,0.3,0,220);
       tone(380,'sawtooth',0.15,0.3,0.18,190);
       tone(300,'sawtooth',0.25,0.38,0.38,150);
-      // Низкий удар
       tone(80,'sine',0.4,0.5,0.65);
-      // Высокий сигнал тревоги
       tone(880,'square',0.08,0.2,0.0);
       tone(880,'square',0.08,0.2,0.2);
       tone(880,'square',0.08,0.2,0.4);
@@ -1345,15 +1491,9 @@ const SND = (()=>{
     drawSpin(){ tone(200+Math.random()*120,'triangle',0.04,0.15); },
     drawReveal(){ [262,330,392,523].forEach((f,i)=>tone(f,'sine',0.18,0.28,i*0.1)); tone(523,'sine',0.5,0.38,0.5); },
     finish(){
-      // Epic winner fanfare
-      const a=ac();
-      // Dramatic build-up
       [[262,'sawtooth',0.1,0.3],[330,'sawtooth',0.1,0.28,0.12],[392,'sawtooth',0.1,0.28,0.25],[523,'sawtooth',0.15,0.32,0.4]].forEach(([f,t,d,v,dt=0])=>tone(f,t,d,v,dt));
-      // Main fanfare melody
       [[523,'sine',0.22,0.4,0.6],[659,'sine',0.18,0.38,0.82],[784,'sine',0.18,0.38,1.04],[1047,'sine',0.28,0.45,1.26],[880,'sine',0.16,0.35,1.56],[784,'sine',0.16,0.35,1.74],[1047,'sine',0.45,0.5,1.95]].forEach(([f,t,d,v,dt])=>tone(f,t,d,v,dt));
-      // Harmony chords
       [[659,'sine',0.22,0.2,0.6],[523,'sine',0.22,0.18,0.82],[392,'sine',0.28,0.2,1.26]].forEach(([f,t,d,v,dt])=>tone(f,t,d,v,dt));
-      // Final triumphant burst
       [523,659,784,1047,1319].forEach((f,i)=>tone(f,'sawtooth',0.3,0.22,2.45+i*0.07));
       tone(1047,'sine',0.7,0.5,2.9);
     },
